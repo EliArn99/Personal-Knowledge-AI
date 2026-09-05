@@ -1,11 +1,10 @@
-from email import message
-
 from django.shortcuts import get_object_or_404
+
 from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from apps.ai.services.openai_service import (
+from apps.ai.services.ai_service import (
     AIServiceError,
     generate_chat_response,
 )
@@ -53,10 +52,8 @@ class ChatMessageListCreateAPIView(
         )
 
     def get_queryset(self):
-        chat = self.get_chat()
-
         return Message.objects.filter(
-            chat=chat
+            chat=self.get_chat()
         )
 
     def create(self, request, *args, **kwargs):
@@ -70,11 +67,13 @@ class ChatMessageListCreateAPIView(
             raise_exception=True
         )
 
+        # 1. Save the user's message
         user_message = serializer.save(
             chat=chat,
             role=Message.Role.USER,
         )
 
+        # 2. Load recent conversation history
         history_messages = list(
             chat.messages
             .order_by("-created_at")[:20]
@@ -90,6 +89,7 @@ class ChatMessageListCreateAPIView(
             for message in history_messages
         ]
 
+        # 3. Send conversation to AI
         try:
             ai_answer = generate_chat_response(
                 history
@@ -106,22 +106,22 @@ class ChatMessageListCreateAPIView(
                 status=status.HTTP_502_BAD_GATEWAY,
             )
 
+        # 4. Save AI answer
         assistant_message = Message.objects.create(
             chat=chat,
             role=Message.Role.ASSISTANT,
             content=ai_answer,
         )
 
-        chat.save(
-            update_fields=["updated_at"]
-        )
+        # Updates Chat.updated_at
+        chat.save()
 
+        # 5. Return both messages
         return Response(
             {
                 "user_message": MessageSerializer(
                     user_message
                 ).data,
-
                 "assistant_message": MessageSerializer(
                     assistant_message
                 ).data,

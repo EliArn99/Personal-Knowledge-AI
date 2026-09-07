@@ -1,10 +1,118 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "frontend/base.html" %}
+{% load static %}
 
-</body>
-</html>
+{% block title %}
+Chat | Personal Knowledge AI
+{% endblock %}
+
+{% block content %}
+
+<div class="chat-layout">
+
+    <!-- Sidebar -->
+
+    <aside class="sidebar">
+
+        <div class="sidebar-header">
+
+            <h5>
+                Personal Knowledge AI
+            </h5>
+
+            <button
+                id="new-chat-button"
+                class="btn btn-light w-100 mt-3">
+                + New Chat
+            </button>
+
+        </div>
+
+        <div
+            id="chat-list"
+            class="chat-list">
+        </div>
+
+        <div class="sidebar-footer">
+
+            <span>
+                {{ request.user.username }}
+            </span>
+
+            <button
+                id="logout-button"
+                class="btn btn-outline-light btn-sm">
+                Logout
+            </button>
+
+        </div>
+
+    </aside>
+
+
+    <!-- Main chat -->
+
+    <main class="chat-main">
+
+        <div
+            id="empty-state"
+            class="empty-state">
+
+            <h2>
+                Personal Knowledge AI
+            </h2>
+
+            <p>
+                Select a conversation or start a new one.
+            </p>
+
+        </div>
+
+
+        <div
+            id="messages"
+            class="messages">
+        </div>
+
+
+        <div class="message-input-container">
+
+            <form id="message-form">
+
+                {% csrf_token %}
+
+                <div class="input-group">
+
+                    <textarea
+                        id="message-input"
+                        class="form-control"
+                        rows="1"
+                        placeholder="Ask anything..."
+                    ></textarea>
+
+                    <button
+                        id="send-button"
+                        class="btn btn-dark"
+                        type="submit">
+                        Send
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </main>
+
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script
+    src="{% static 'frontend/js/chat.js' %}">
+</script>
+
+{% endblock %}

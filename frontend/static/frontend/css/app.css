@@ -72,15 +72,59 @@ body {
 
 
 .chat-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
     padding: 12px;
 
     margin-bottom: 6px;
 
     border-radius: 8px;
+}
+
+.chat-title {
+    flex: 1;
+
+    overflow: hidden;
+
+    white-space: nowrap;
+
+    text-overflow: ellipsis;
 
     cursor: pointer;
 }
 
+
+.chat-menu-button {
+    border: none;
+
+    background: transparent;
+
+    color: #ffffff;
+
+    font-size: 20px;
+
+    line-height: 1;
+
+    padding: 0 6px;
+
+    opacity: 0;
+
+    transition: opacity 0.2s ease;
+}
+
+
+.chat-item:hover .chat-menu-button {
+    opacity: 1;
+}
+
+
+.chat-menu-button:hover {
+    background: #565869;
+
+    border-radius: 6px;
+}
 
 .chat-item:hover {
     background: #343541;

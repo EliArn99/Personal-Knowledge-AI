@@ -3,6 +3,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from .utils import generate_chat_title
 
 from apps.ai.services.ai_service import (
     AIServiceError,
@@ -72,6 +73,27 @@ class ChatMessageListCreateAPIView(
             chat=chat,
             role=Message.Role.USER,
         )
+
+        is_first_user_message = not chat.messages.filter(
+            role=Message.Role.USER
+        ).exclude(
+            pk=user_message.pk,
+        ).exists()
+
+        if (
+            chat.title == "New Chat"
+            and is_first_user_message
+        ):
+            chat.title = generate_chat_title(
+                user_message.content
+            )
+
+            chat.save(
+                update_fields=[
+                    "title",
+                    "updated_at",
+                ]
+            )
 
         # 2. Load recent conversation history
         history_messages = list(

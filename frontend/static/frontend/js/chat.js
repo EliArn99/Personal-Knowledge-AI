@@ -1,6 +1,10 @@
 let currentChatId = null;
 
 
+/* =====================================================
+   Helpers
+===================================================== */
+
 function getCookie(name) {
     const cookies = document.cookie.split(";");
 
@@ -40,11 +44,11 @@ async function apiFetch(url, options = {}) {
         }
     );
 
-    if (response.status === 401 ||
-        response.status === 403) {
-
+    if (
+        response.status === 401 ||
+        response.status === 403
+    ) {
         window.location.href = "/login/";
-
         return null;
     }
 
@@ -52,17 +56,16 @@ async function apiFetch(url, options = {}) {
 }
 
 
-/* -----------------
+/* =====================================================
    Chats
------------------- */
-
+===================================================== */
 
 async function loadChats() {
     const response = await apiFetch(
         "/api/chats/"
     );
 
-    if (!response) {
+    if (!response || !response.ok) {
         return;
     }
 
@@ -79,24 +82,60 @@ function renderChats(chats) {
     chatList.innerHTML = "";
 
     for (const chat of chats) {
-
         const element =
             document.createElement("div");
 
         element.className = "chat-item";
-
-        element.textContent = chat.title;
-
         element.dataset.chatId = chat.id;
 
         if (chat.id === currentChatId) {
             element.classList.add("active");
         }
 
-        element.addEventListener(
+
+        /* Chat title */
+
+        const title =
+            document.createElement("span");
+
+        title.className = "chat-title";
+        title.textContent = chat.title;
+
+        title.addEventListener(
             "click",
             () => selectChat(chat.id)
         );
+
+
+        /* Chat menu button */
+
+        const menuButton =
+            document.createElement("button");
+
+        menuButton.className =
+            "chat-menu-button";
+
+        menuButton.type = "button";
+
+        menuButton.textContent = "⋯";
+
+        menuButton.title = "Chat options";
+
+        menuButton.addEventListener(
+            "click",
+            (event) => {
+                event.stopPropagation();
+
+                renameChat(
+                    chat.id,
+                    chat.title
+                );
+            }
+        );
+
+
+        element.appendChild(title);
+        element.appendChild(menuButton);
 
         chatList.appendChild(element);
     }
@@ -110,7 +149,8 @@ async function createChat() {
             method: "POST",
 
             headers: {
-                "Content-Type": "application/json",
+                "Content-Type":
+                    "application/json",
             },
 
             body: JSON.stringify({
@@ -130,9 +170,12 @@ async function createChat() {
     await loadChats();
     await loadMessages();
 
-    document
-        .getElementById("message-input")
-        .focus();
+    const input =
+        document.getElementById(
+            "message-input"
+        );
+
+    input.focus();
 }
 
 
@@ -144,10 +187,68 @@ async function selectChat(chatId) {
 }
 
 
-/* -----------------
-   Messages
------------------- */
+/* =====================================================
+   Rename Chat
+===================================================== */
 
+async function renameChat(
+    chatId,
+    currentTitle
+) {
+    const newTitle = prompt(
+        "Enter a new chat title:",
+        currentTitle
+    );
+
+    // User pressed Cancel
+    if (newTitle === null) {
+        return;
+    }
+
+    const cleanedTitle =
+        newTitle.trim();
+
+    // Empty title
+    if (!cleanedTitle) {
+        return;
+    }
+
+    // Nothing changed
+    if (cleanedTitle === currentTitle) {
+        return;
+    }
+
+    const response = await apiFetch(
+        `/api/chats/${chatId}/`,
+        {
+            method: "PATCH",
+
+            headers: {
+                "Content-Type":
+                    "application/json",
+            },
+
+            body: JSON.stringify({
+                title: cleanedTitle,
+            }),
+        }
+    );
+
+    if (!response || !response.ok) {
+        alert(
+            "Failed to rename chat."
+        );
+
+        return;
+    }
+
+    await loadChats();
+}
+
+
+/* =====================================================
+   Messages
+===================================================== */
 
 async function loadMessages() {
     if (!currentChatId) {
@@ -162,7 +263,8 @@ async function loadMessages() {
         return;
     }
 
-    const messages = await response.json();
+    const messages =
+        await response.json();
 
     renderMessages(messages);
 }
@@ -170,10 +272,14 @@ async function loadMessages() {
 
 function renderMessages(messages) {
     const container =
-        document.getElementById("messages");
+        document.getElementById(
+            "messages"
+        );
 
     const emptyState =
-        document.getElementById("empty-state");
+        document.getElementById(
+            "empty-state"
+        );
 
     container.innerHTML = "";
 
@@ -189,12 +295,17 @@ function renderMessages(messages) {
 
 function appendMessage(message) {
     const container =
-        document.getElementById("messages");
+        document.getElementById(
+            "messages"
+        );
 
     const element =
         document.createElement("div");
 
-    element.classList.add("message");
+    element.classList.add(
+        "message"
+    );
+
 
     if (message.role === "user") {
         element.classList.add(
@@ -206,10 +317,14 @@ function appendMessage(message) {
         );
     }
 
+
+    /* Message role */
+
     const role =
         document.createElement("div");
 
-    role.className = "message-role";
+    role.className =
+        "message-role";
 
     role.textContent =
         message.role === "user"
@@ -217,8 +332,13 @@ function appendMessage(message) {
             : "AI";
 
 
+    /* Message content */
+
     const content =
         document.createElement("div");
+
+    content.className =
+        "message-content";
 
     content.textContent =
         message.content;
@@ -233,22 +353,39 @@ function appendMessage(message) {
 
 function scrollToBottom() {
     const container =
-        document.getElementById("messages");
+        document.getElementById(
+            "messages"
+        );
 
     container.scrollTop =
         container.scrollHeight;
 }
 
 
-/* -----------------
-   Send message
------------------- */
-
+/* =====================================================
+   Send Message
+===================================================== */
 
 async function sendMessage(content) {
+    /*
+        If the user has not selected
+        or created a chat yet,
+        create one automatically.
+    */
+
     if (!currentChatId) {
         await createChat();
     }
+
+    if (!currentChatId) {
+        return;
+    }
+
+
+    /*
+        Show user's message immediately
+        without waiting for the server.
+    */
 
     appendMessage({
         role: "user",
@@ -257,11 +394,24 @@ async function sendMessage(content) {
 
     scrollToBottom();
 
+
     const sendButton =
-        document.getElementById("send-button");
+        document.getElementById(
+            "send-button"
+        );
+
+    const input =
+        document.getElementById(
+            "message-input"
+        );
+
 
     sendButton.disabled = true;
-    sendButton.textContent = "Thinking...";
+    input.disabled = true;
+
+    sendButton.textContent =
+        "Thinking...";
+
 
     try {
         const response = await apiFetch(
@@ -270,7 +420,8 @@ async function sendMessage(content) {
                 method: "POST",
 
                 headers: {
-                    "Content-Type": "application/json",
+                    "Content-Type":
+                        "application/json",
                 },
 
                 body: JSON.stringify({
@@ -279,56 +430,73 @@ async function sendMessage(content) {
             }
         );
 
+
         if (!response || !response.ok) {
             throw new Error(
                 "Failed to send message."
             );
         }
 
+
         const data = await response.json();
 
         appendMessage(
             data.assistant_message
         );
+
         await loadChats();
 
         scrollToBottom();
 
     } catch (error) {
+        console.error(error);
 
         appendMessage({
             role: "assistant",
+
             content:
                 "Something went wrong. Please try again.",
         });
 
-    } finally {
+        scrollToBottom();
 
+    } finally {
         sendButton.disabled = false;
-        sendButton.textContent = "Send";
+        input.disabled = false;
+
+        sendButton.textContent =
+            "Send";
+
+        input.focus();
     }
 }
 
 
-/* -----------------
-   Events
------------------- */
-
+/* =====================================================
+   New Chat Button
+===================================================== */
 
 document
-    .getElementById("new-chat-button")
+    .getElementById(
+        "new-chat-button"
+    )
     .addEventListener(
         "click",
         createChat
     );
 
 
+/* =====================================================
+   Message Form
+===================================================== */
+
 document
-    .getElementById("message-form")
+    .getElementById(
+        "message-form"
+    )
     .addEventListener(
         "submit",
         async (event) => {
-
             event.preventDefault();
 
             const input =
@@ -345,30 +513,73 @@ document
 
             input.value = "";
 
-            await sendMessage(content);
+            await sendMessage(
+                content
+            );
         }
     );
 
 
+/* =====================================================
+   Enter to Send
+   Shift + Enter for new line
+===================================================== */
+
 document
-    .getElementById("logout-button")
+    .getElementById(
+        "message-input"
+    )
+    .addEventListener(
+        "keydown",
+        (event) => {
+            if (
+                event.key === "Enter" &&
+                !event.shiftKey
+            ) {
+                event.preventDefault();
+
+                document
+                    .getElementById(
+                        "message-form"
+                    )
+                    .requestSubmit();
+            }
+        }
+    );
+
+
+/* =====================================================
+   Logout
+===================================================== */
+
+document
+    .getElementById(
+        "logout-button"
+    )
     .addEventListener(
         "click",
         async () => {
+            const response =
+                await apiFetch(
+                    "/api/auth/logout/",
+                    {
+                        method: "POST",
+                    }
+                );
 
-            await apiFetch(
-                "/api/auth/logout/",
-                {
-                    method: "POST",
-                }
-            );
-
-            window.location.href =
-                "/login/";
+            if (
+                response &&
+                response.ok
+            ) {
+                window.location.href =
+                    "/login/";
+            }
         }
     );
 
 
-/* Initial page load */
+/* =====================================================
+   Initial Page Load
+===================================================== */
 
 loadChats();

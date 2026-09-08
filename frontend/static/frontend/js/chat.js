@@ -290,6 +290,7 @@ async function sendMessage(content) {
         appendMessage(
             data.assistant_message
         );
+        await loadChats();
 
         scrollToBottom();
 

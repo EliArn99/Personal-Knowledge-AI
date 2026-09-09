@@ -107,26 +107,59 @@ function renderChats(chats) {
         );
 
 
-        /* Chat menu button */
+        /* Menu wrapper */
+
+        const menuWrapper =
+            document.createElement("div");
+
+        menuWrapper.className =
+            "chat-menu-wrapper";
+
+
+        /* Menu button */
 
         const menuButton =
             document.createElement("button");
 
+        menuButton.type = "button";
         menuButton.className =
             "chat-menu-button";
 
-        menuButton.type = "button";
-
         menuButton.textContent = "⋯";
-
         menuButton.title = "Chat options";
 
-        menuButton.addEventListener(
+
+        /* Dropdown */
+
+        const dropdown =
+            document.createElement("div");
+
+        dropdown.className =
+            "chat-dropdown";
+
+
+        /* Rename */
+
+        const renameButton =
+            document.createElement("button");
+
+        renameButton.type = "button";
+        renameButton.className =
+            "chat-dropdown-item";
+
+        renameButton.textContent =
+            "Rename";
+
+        renameButton.addEventListener(
             "click",
-            (event) => {
+            async (event) => {
                 event.stopPropagation();
 
-                renameChat(
+                dropdown.classList.remove(
+                    "show"
+                );
+
+                await renameChat(
                     chat.id,
                     chat.title
                 );
@@ -134,10 +167,99 @@ function renderChats(chats) {
         );
 
 
-        element.appendChild(title);
-        element.appendChild(menuButton);
+        /* Delete */
 
-        chatList.appendChild(element);
+        const deleteButton =
+            document.createElement("button");
+
+        deleteButton.type = "button";
+        deleteButton.className =
+            "chat-dropdown-item chat-dropdown-delete";
+
+        deleteButton.textContent =
+            "Delete";
+
+        deleteButton.addEventListener(
+            "click",
+            async (event) => {
+                event.stopPropagation();
+
+                dropdown.classList.remove(
+                    "show"
+                );
+
+                await deleteChat(
+                    chat.id,
+                    chat.title
+                );
+            }
+        );
+
+
+        /* Toggle menu */
+
+        menuButton.addEventListener(
+            "click",
+            (event) => {
+                event.stopPropagation();
+
+                const wasOpen =
+                    dropdown.classList.contains(
+                        "show"
+                    );
+
+                closeAllChatMenus();
+
+                if (!wasOpen) {
+                    dropdown.classList.add(
+                        "show"
+                    );
+                }
+            }
+        );
+
+
+        dropdown.appendChild(
+            renameButton
+        );
+
+        dropdown.appendChild(
+            deleteButton
+        );
+
+        menuWrapper.appendChild(
+            menuButton
+        );
+
+        menuWrapper.appendChild(
+            dropdown
+        );
+
+        element.appendChild(
+            title
+        );
+
+        element.appendChild(
+            menuWrapper
+        );
+
+        chatList.appendChild(
+            element
+        );
+    }
+}
+
+
+function closeAllChatMenus() {
+    const dropdowns =
+        document.querySelectorAll(
+            ".chat-dropdown"
+        );
+
+    for (const dropdown of dropdowns) {
+        dropdown.classList.remove(
+            "show"
+        );
     }
 }
 
@@ -160,27 +282,35 @@ async function createChat() {
     );
 
     if (!response || !response.ok) {
+        alert(
+            "Failed to create chat."
+        );
+
         return;
     }
 
-    const chat = await response.json();
+    const chat =
+        await response.json();
 
-    currentChatId = chat.id;
+    currentChatId =
+        chat.id;
 
     await loadChats();
     await loadMessages();
 
-    const input =
-        document.getElementById(
+    document
+        .getElementById(
             "message-input"
-        );
-
-    input.focus();
+        )
+        .focus();
 }
 
 
 async function selectChat(chatId) {
-    currentChatId = chatId;
+    currentChatId =
+        chatId;
+
+    closeAllChatMenus();
 
     await loadChats();
     await loadMessages();
@@ -200,7 +330,6 @@ async function renameChat(
         currentTitle
     );
 
-    // User pressed Cancel
     if (newTitle === null) {
         return;
     }
@@ -208,13 +337,14 @@ async function renameChat(
     const cleanedTitle =
         newTitle.trim();
 
-    // Empty title
     if (!cleanedTitle) {
         return;
     }
 
-    // Nothing changed
-    if (cleanedTitle === currentTitle) {
+    if (
+        cleanedTitle ===
+        currentTitle
+    ) {
         return;
     }
 
@@ -247,11 +377,71 @@ async function renameChat(
 
 
 /* =====================================================
+   Delete Chat
+===================================================== */
+
+async function deleteChat(
+    chatId,
+    chatTitle
+) {
+    const confirmed = confirm(
+        `Are you sure you want to delete "${chatTitle}"?`
+    );
+
+    if (!confirmed) {
+        return;
+    }
+
+    const response = await apiFetch(
+        `/api/chats/${chatId}/`,
+        {
+            method: "DELETE",
+        }
+    );
+
+    if (!response || !response.ok) {
+        alert(
+            "Failed to delete chat."
+        );
+
+        return;
+    }
+
+    if (currentChatId === chatId) {
+        currentChatId = null;
+
+        clearChatView();
+    }
+
+    await loadChats();
+}
+
+
+function clearChatView() {
+    const messages =
+        document.getElementById(
+            "messages"
+        );
+
+    const emptyState =
+        document.getElementById(
+            "empty-state"
+        );
+
+    messages.innerHTML = "";
+
+    emptyState.style.display =
+        "block";
+}
+
+
+/* =====================================================
    Messages
 ===================================================== */
 
 async function loadMessages() {
     if (!currentChatId) {
+        clearChatView();
         return;
     }
 
@@ -266,7 +456,9 @@ async function loadMessages() {
     const messages =
         await response.json();
 
-    renderMessages(messages);
+    renderMessages(
+        messages
+    );
 }
 
 
@@ -283,10 +475,13 @@ function renderMessages(messages) {
 
     container.innerHTML = "";
 
-    emptyState.style.display = "none";
+    emptyState.style.display =
+        "none";
 
     for (const message of messages) {
-        appendMessage(message);
+        appendMessage(
+            message
+        );
     }
 
     scrollToBottom();
@@ -300,7 +495,9 @@ function appendMessage(message) {
         );
 
     const element =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
 
     element.classList.add(
         "message"
@@ -321,7 +518,9 @@ function appendMessage(message) {
     /* Message role */
 
     const role =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
 
     role.className =
         "message-role";
@@ -335,7 +534,9 @@ function appendMessage(message) {
     /* Message content */
 
     const content =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
 
     content.className =
         "message-content";
@@ -344,10 +545,17 @@ function appendMessage(message) {
         message.content;
 
 
-    element.appendChild(role);
-    element.appendChild(content);
+    element.appendChild(
+        role
+    );
 
-    container.appendChild(element);
+    element.appendChild(
+        content
+    );
+
+    container.appendChild(
+        element
+    );
 }
 
 
@@ -367,12 +575,6 @@ function scrollToBottom() {
 ===================================================== */
 
 async function sendMessage(content) {
-    /*
-        If the user has not selected
-        or created a chat yet,
-        create one automatically.
-    */
-
     if (!currentChatId) {
         await createChat();
     }
@@ -382,10 +584,7 @@ async function sendMessage(content) {
     }
 
 
-    /*
-        Show user's message immediately
-        without waiting for the server.
-    */
+    /* Show user message immediately */
 
     appendMessage({
         role: "user",
@@ -431,25 +630,40 @@ async function sendMessage(content) {
         );
 
 
-        if (!response || !response.ok) {
+        if (
+            !response ||
+            !response.ok
+        ) {
             throw new Error(
                 "Failed to send message."
             );
         }
 
 
-        const data = await response.json();
+        const data =
+            await response.json();
+
 
         appendMessage(
             data.assistant_message
         );
+
+
+        /*
+            Reload sidebar because
+            automatic chat title may
+            have changed.
+        */
 
         await loadChats();
 
         scrollToBottom();
 
     } catch (error) {
-        console.error(error);
+        console.error(
+            "Send message error:",
+            error
+        );
 
         appendMessage({
             role: "assistant",
@@ -473,7 +687,7 @@ async function sendMessage(content) {
 
 
 /* =====================================================
-   New Chat Button
+   New Chat
 ===================================================== */
 
 document
@@ -521,8 +735,8 @@ document
 
 
 /* =====================================================
-   Enter to Send
-   Shift + Enter for new line
+   Enter = Send
+   Shift + Enter = New line
 ===================================================== */
 
 document
@@ -579,7 +793,19 @@ document
 
 
 /* =====================================================
-   Initial Page Load
+   Close chat menus when clicking outside
+===================================================== */
+
+document.addEventListener(
+    "click",
+    () => {
+        closeAllChatMenus();
+    }
+);
+
+
+/* =====================================================
+   Initial page load
 ===================================================== */
 
 loadChats();

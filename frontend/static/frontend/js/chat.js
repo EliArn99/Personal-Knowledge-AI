@@ -434,6 +434,20 @@ function clearChatView() {
         "block";
 }
 
+function renderMarkdown(markdownText) {
+    const rawHtml =
+        marked.parse(markdownText);
+
+    return DOMPurify.sanitize(
+        rawHtml,
+        {
+            USE_PROFILES: {
+                html: true,
+            },
+        }
+    );
+}
+
 
 /* =====================================================
    Messages
@@ -541,8 +555,16 @@ function appendMessage(message) {
     content.className =
         "message-content";
 
-    content.textContent =
-        message.content;
+
+    if (message.role === "assistant") {
+        content.innerHTML =
+            renderMarkdown(
+                message.content
+            );
+    } else {
+        content.textContent =
+            message.content;
+    }
 
 
     element.appendChild(

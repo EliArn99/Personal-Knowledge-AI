@@ -138,7 +138,7 @@ function renderChats(chats) {
             "chat-dropdown";
 
 
-        /* Rename */
+        /* Rename button */
 
         const renameButton =
             document.createElement("button");
@@ -167,7 +167,7 @@ function renderChats(chats) {
         );
 
 
-        /* Delete */
+        /* Delete button */
 
         const deleteButton =
             document.createElement("button");
@@ -342,8 +342,7 @@ async function renameChat(
     }
 
     if (
-        cleanedTitle ===
-        currentTitle
+        cleanedTitle === currentTitle
     ) {
         return;
     }
@@ -434,6 +433,11 @@ function clearChatView() {
         "block";
 }
 
+
+/* =====================================================
+   Markdown
+===================================================== */
+
 function renderMarkdown(markdownText) {
     const rawHtml =
         marked.parse(markdownText);
@@ -446,6 +450,98 @@ function renderMarkdown(markdownText) {
             },
         }
     );
+}
+
+
+/* =====================================================
+   Syntax Highlighting
+===================================================== */
+
+function highlightCodeBlocks(container) {
+    const codeBlocks =
+        container.querySelectorAll(
+            "pre code"
+        );
+
+    for (const block of codeBlocks) {
+        hljs.highlightElement(
+            block
+        );
+    }
+}
+
+
+/* =====================================================
+   Copy Code Buttons
+===================================================== */
+
+function addCopyButtons(container) {
+    const codeBlocks =
+        container.querySelectorAll(
+            "pre"
+        );
+
+    for (const pre of codeBlocks) {
+        const code =
+            pre.querySelector(
+                "code"
+            );
+
+        if (!code) {
+            continue;
+        }
+
+        pre.classList.add(
+            "code-block-wrapper"
+        );
+
+        const button =
+            document.createElement(
+                "button"
+            );
+
+        button.type = "button";
+        button.className =
+            "copy-code-button";
+
+        button.textContent =
+            "Copy";
+
+        button.addEventListener(
+            "click",
+            async () => {
+                try {
+                    await navigator.clipboard.writeText(
+                        code.innerText
+                    );
+
+                    button.textContent =
+                        "Copied!";
+
+                    setTimeout(
+                        () => {
+                            button.textContent =
+                                "Copy";
+                        },
+                        1500
+                    );
+
+                } catch (error) {
+                    console.error(
+                        "Copy failed:",
+                        error
+                    );
+
+                    button.textContent =
+                        "Failed";
+                }
+            }
+        );
+
+        pre.appendChild(
+            button
+        );
+    }
 }
 
 
@@ -517,7 +613,6 @@ function appendMessage(message) {
         "message"
     );
 
-
     if (message.role === "user") {
         element.classList.add(
             "message-user"
@@ -529,7 +624,7 @@ function appendMessage(message) {
     }
 
 
-    /* Message role */
+    /* Role */
 
     const role =
         document.createElement(
@@ -545,7 +640,7 @@ function appendMessage(message) {
             : "AI";
 
 
-    /* Message content */
+    /* Content */
 
     const content =
         document.createElement(
@@ -578,6 +673,17 @@ function appendMessage(message) {
     container.appendChild(
         element
     );
+
+
+    if (message.role === "assistant") {
+        highlightCodeBlocks(
+            content
+        );
+
+        addCopyButtons(
+            content
+        );
+    }
 }
 
 
@@ -605,8 +711,6 @@ async function sendMessage(content) {
         return;
     }
 
-
-    /* Show user message immediately */
 
     appendMessage({
         role: "user",
@@ -670,12 +774,6 @@ async function sendMessage(content) {
             data.assistant_message
         );
 
-
-        /*
-            Reload sidebar because
-            automatic chat title may
-            have changed.
-        */
 
         await loadChats();
 
@@ -758,7 +856,7 @@ document
 
 /* =====================================================
    Enter = Send
-   Shift + Enter = New line
+   Shift + Enter = New Line
 ===================================================== */
 
 document
@@ -815,7 +913,7 @@ document
 
 
 /* =====================================================
-   Close chat menus when clicking outside
+   Close Chat Menus
 ===================================================== */
 
 document.addEventListener(
@@ -827,7 +925,7 @@ document.addEventListener(
 
 
 /* =====================================================
-   Initial page load
+   Initial Page Load
 ===================================================== */
 
 loadChats();

@@ -697,6 +697,119 @@ function scrollToBottom() {
         container.scrollHeight;
 }
 
+/* =====================================================
+   AI Loading Indicator
+===================================================== */
+
+function showThinkingIndicator() {
+    const container =
+        document.getElementById(
+            "messages"
+        );
+
+    const element =
+        document.createElement(
+            "div"
+        );
+
+    element.classList.add(
+        "message",
+        "message-assistant",
+        "thinking-message"
+    );
+
+
+    /* AI role */
+
+    const role =
+        document.createElement(
+            "div"
+        );
+
+    role.className =
+        "message-role";
+
+    role.textContent = "AI";
+
+
+    /* Thinking content */
+
+    const content =
+        document.createElement(
+            "div"
+        );
+
+    content.className =
+        "thinking-content";
+
+
+    const dots =
+        document.createElement(
+            "div"
+        );
+
+    dots.className =
+        "typing-dots";
+
+    dots.setAttribute(
+        "aria-label",
+        "AI is thinking"
+    );
+
+
+    for (let i = 0; i < 3; i++) {
+        const dot =
+            document.createElement(
+                "span"
+            );
+
+        dot.className =
+            "typing-dot";
+
+        dot.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+        dots.appendChild(
+            dot
+        );
+    }
+
+
+    content.appendChild(
+        dots
+    );
+
+    element.appendChild(
+        role
+    );
+
+    element.appendChild(
+        content
+    );
+
+    container.appendChild(
+        element
+    );
+
+    scrollToBottom();
+
+    return element;
+}
+
+
+function removeThinkingIndicator(
+    indicator
+) {
+    if (
+        indicator &&
+        indicator.isConnected
+    ) {
+        indicator.remove();
+    }
+}
+
 
 /* =====================================================
    Send Message
@@ -711,6 +824,8 @@ async function sendMessage(content) {
         return;
     }
 
+
+    /* Show user message immediately */
 
     appendMessage({
         role: "user",
@@ -731,11 +846,21 @@ async function sendMessage(content) {
         );
 
 
+    /*
+        Disable input while AI
+        generates a response.
+    */
+
     sendButton.disabled = true;
     input.disabled = true;
 
-    sendButton.textContent =
-        "Thinking...";
+
+    /*
+        Show animated AI indicator.
+    */
+
+    const thinkingIndicator =
+        showThinkingIndicator();
 
 
     try {
@@ -770,10 +895,25 @@ async function sendMessage(content) {
             await response.json();
 
 
+        /*
+            Remove loading animation
+            before showing AI answer.
+        */
+
+        removeThinkingIndicator(
+            thinkingIndicator
+        );
+
+
         appendMessage(
             data.assistant_message
         );
 
+
+        /*
+            Reload sidebar because
+            automatic title may change.
+        */
 
         await loadChats();
 
@@ -785,6 +925,12 @@ async function sendMessage(content) {
             error
         );
 
+
+        removeThinkingIndicator(
+            thinkingIndicator
+        );
+
+
         appendMessage({
             role: "assistant",
 
@@ -795,11 +941,18 @@ async function sendMessage(content) {
         scrollToBottom();
 
     } finally {
+        /*
+            Safety cleanup in case the
+            indicator still exists.
+        */
+
+        removeThinkingIndicator(
+            thinkingIndicator
+        );
+
+
         sendButton.disabled = false;
         input.disabled = false;
-
-        sendButton.textContent =
-            "Send";
 
         input.focus();
     }

@@ -20,16 +20,16 @@ Chat | Personal Knowledge AI
             </h5>
 
             <button
-                id="new-chat-button"
-                class="btn btn-light w-100 mt-3">
+                    id="new-chat-button"
+                    class="btn btn-light w-100 mt-3">
                 + New Chat
             </button>
 
         </div>
 
         <div
-            id="chat-list"
-            class="chat-list">
+                id="chat-list"
+                class="chat-list">
         </div>
 
         <div class="sidebar-footer">
@@ -39,8 +39,8 @@ Chat | Personal Knowledge AI
             </span>
 
             <button
-                id="logout-button"
-                class="btn btn-outline-light btn-sm">
+                    id="logout-button"
+                    class="btn btn-outline-light btn-sm">
                 Logout
             </button>
 
@@ -48,14 +48,40 @@ Chat | Personal Knowledge AI
 
     </aside>
 
+    <div
+            id="sidebar-overlay"
+            class="sidebar-overlay">
+    </div>
+
 
     <!-- Main chat -->
 
     <main class="chat-main">
 
+        <div class="mobile-chat-header">
+
+            <button
+                    id="sidebar-toggle-button"
+                    class="mobile-menu-button"
+                    type="button"
+                    aria-label="Open conversations"
+                    aria-expanded="false">
+
+        <span aria-hidden="true">
+            ☰
+        </span>
+
+            </button>
+
+            <span class="mobile-chat-title">
+        Personal Knowledge AI
+    </span>
+
+        </div>
+
         <div
-            id="empty-state"
-            class="empty-state">
+                id="empty-state"
+                class="empty-state">
 
             <h2>
                 Personal Knowledge AI
@@ -69,8 +95,8 @@ Chat | Personal Knowledge AI
 
 
         <div
-            id="messages"
-            class="messages">
+                id="messages"
+                class="messages">
         </div>
 
 
@@ -83,16 +109,16 @@ Chat | Personal Knowledge AI
                 <div class="input-group">
 
                     <textarea
-                        id="message-input"
-                        class="form-control"
-                        rows="1"
-                        placeholder="Ask anything..."
+                            id="message-input"
+                            class="form-control"
+                            rows="1"
+                            placeholder="Ask anything..."
                     ></textarea>
 
                     <button
-                        id="send-button"
-                        class="btn btn-dark"
-                        type="submit">
+                            id="send-button"
+                            class="btn btn-dark"
+                            type="submit">
                         Send
                     </button>
 
@@ -112,7 +138,7 @@ Chat | Personal Knowledge AI
 {% block scripts %}
 
 <script
-    src="{% static 'frontend/js/chat.js' %}">
+        src="{% static 'frontend/js/chat.js' %}">
 </script>
 
 {% endblock %}

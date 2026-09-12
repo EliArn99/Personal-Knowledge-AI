@@ -389,7 +389,6 @@ GROQ_API_KEY=your-groq-api-key
 AI_MODEL=openai/gpt-oss-120b
 ```
 
-The real `.env` file must **never be committed to GitHub**.
 
 The repository contains `.env.example` instead:
 

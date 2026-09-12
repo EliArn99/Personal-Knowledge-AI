@@ -40,6 +40,9 @@ The chat system currently supports:
 * Saving assistant messages
 * Conversation context
 * Persistent chat history
+* Markdown-formatted AI responses
+* Code syntax highlighting
+* AI thinking/loading indicator
 
 The AI receives previous messages from the conversation so it can understand follow-up questions and maintain context.
 
@@ -72,7 +75,7 @@ This keeps the AI provider logic separate from Django views and makes the archit
 
 ### 🗂️ Multiple Chats
 
-Users can create multiple conversations.
+Users can create and manage multiple conversations.
 
 Current chat functionality includes:
 
@@ -81,6 +84,9 @@ Current chat functionality includes:
 * Select a conversation
 * Load conversation history
 * Continue previous conversations
+* Automatic chat titles
+* Rename conversations
+* Delete conversations
 
 Example:
 
@@ -198,7 +204,7 @@ Example response:
 
 ## 🖥️ Frontend
 
-The application includes a custom frontend built with:
+The application includes a custom responsive frontend built with:
 
 * HTML
 * CSS
@@ -216,13 +222,21 @@ Current interface includes:
 * Registration page
 * Chat page
 * Conversation sidebar
+* Responsive mobile sidebar
 * New Chat button
+* Rename conversation
+* Delete conversation
 * Message history
 * User messages
 * AI messages
+* Markdown rendering
+* Code syntax highlighting
+* Copy code buttons
+* AI thinking/loading animation
 * Message input
 * Send button
 * Logout button
+* Responsive mobile interface
 
 ---
 
@@ -234,6 +248,10 @@ When a user sends a message:
 User enters message
         ↓
 JavaScript
+        ↓
+Display user message
+        ↓
+Show AI thinking indicator
         ↓
 fetch()
         ↓
@@ -255,7 +273,9 @@ JSON response
         ↓
 JavaScript
         ↓
-Display AI message
+Remove loading indicator
+        ↓
+Render AI message
 ```
 
 ---
@@ -277,7 +297,8 @@ Personal-Knowledge-AI/
 │   │   ├── models.py
 │   │   ├── serializers.py
 │   │   ├── views.py
-│   │   └── urls.py
+│   │   ├── urls.py
+│   │   └── utils.py
 │   │
 │   ├── ai/
 │   │   └── services/
@@ -285,9 +306,21 @@ Personal-Knowledge-AI/
 │   │
 │   └── frontend/
 │       ├── templates/
+│       │   └── frontend/
+│       │       ├── base.html
+│       │       ├── chat.html
+│       │       ├── login.html
+│       │       └── register.html
+│       │
 │       └── static/
-│           ├── css/
-│           └── js/
+│           └── frontend/
+│               ├── css/
+│               │   └── app.css
+│               │
+│               └── js/
+│                   ├── chat.js
+│                   ├── login.js
+│                   └── register.js
 │
 ├── config/
 │   ├── settings.py
@@ -319,6 +352,9 @@ Personal-Knowledge-AI/
 * Fetch API
 * AJAX
 * Django Templates
+* Marked
+* DOMPurify
+* Highlight.js
 
 ### Database
 
@@ -464,6 +500,9 @@ http://127.0.0.1:8000/
 ✅ Multiple conversations
 ✅ Chat history
 ✅ User-specific chats
+✅ Automatic chat titles
+✅ Rename conversations
+✅ Delete conversations
 
 ✅ Groq AI integration
 ✅ AI-generated responses
@@ -481,32 +520,36 @@ http://127.0.0.1:8000/
 ✅ Conversation sidebar
 ✅ New Chat
 ✅ Send / receive messages
+✅ Markdown rendering
+✅ Code syntax highlighting
+✅ Copy code buttons
+✅ Improved loading states
+✅ Responsive mobile interface
 ```
 
 ---
 
 ## 🗺️ Planned Improvements
 
-The next stages of the project will focus on improving the existing chat experience and expanding Personal Knowledge AI into a personal knowledge platform.
+The next stages of the project will focus on expanding **Personal Knowledge AI** from an AI chat application into a personal knowledge platform.
 
-Planned features include:
+### Personal Knowledge & RAG
 
 ```text
-⬜ Automatic chat titles
-⬜ Rename conversations
-⬜ Delete conversations
-⬜ Markdown rendering
-⬜ Code syntax highlighting
-⬜ Improved loading states
-⬜ Responsive mobile interface
-
 ⬜ Document uploads
 ⬜ Personal document library
+⬜ Document text extraction
+⬜ Document chunking
+⬜ Embeddings
 ⬜ Semantic search
 ⬜ RAG
 ⬜ Ask questions about documents
 ⬜ AI-generated answers with sources
+```
 
+### Engineering & Production
+
+```text
 ⬜ Automated tests
 ⬜ PostgreSQL
 ⬜ Docker
@@ -536,20 +579,24 @@ Personal Knowledge AI
 
 The project is currently under active development.
 
-The core AI chat functionality is working end-to-end:
+The core AI chat experience is working end-to-end:
 
 ```text
 Authentication
       ↓
-Frontend
+Responsive Frontend
       ↓
 REST API
       ↓
 Database
       ↓
+Conversation Context
+      ↓
 Groq AI
       ↓
-AI Response
+Markdown AI Response
 ```
+
+The next major development stage is the **personal knowledge layer**, starting with document uploads and a personal document library.
 
 More features will be added incrementally as the project evolves.

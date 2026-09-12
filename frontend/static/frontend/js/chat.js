@@ -57,6 +57,110 @@ async function apiFetch(url, options = {}) {
 
 
 /* =====================================================
+   Mobile Sidebar
+===================================================== */
+
+function openMobileSidebar() {
+    const sidebar =
+        document.querySelector(
+            ".sidebar"
+        );
+
+    const overlay =
+        document.getElementById(
+            "sidebar-overlay"
+        );
+
+    const button =
+        document.getElementById(
+            "sidebar-toggle-button"
+        );
+
+    if (
+        !sidebar ||
+        !overlay ||
+        !button
+    ) {
+        return;
+    }
+
+    sidebar.classList.add(
+        "mobile-open"
+    );
+
+    overlay.classList.add(
+        "mobile-visible"
+    );
+
+    button.setAttribute(
+        "aria-expanded",
+        "true"
+    );
+}
+
+
+function closeMobileSidebar() {
+    const sidebar =
+        document.querySelector(
+            ".sidebar"
+        );
+
+    const overlay =
+        document.getElementById(
+            "sidebar-overlay"
+        );
+
+    const button =
+        document.getElementById(
+            "sidebar-toggle-button"
+        );
+
+    if (
+        !sidebar ||
+        !overlay ||
+        !button
+    ) {
+        return;
+    }
+
+    sidebar.classList.remove(
+        "mobile-open"
+    );
+
+    overlay.classList.remove(
+        "mobile-visible"
+    );
+
+    button.setAttribute(
+        "aria-expanded",
+        "false"
+    );
+}
+
+
+function toggleMobileSidebar() {
+    const sidebar =
+        document.querySelector(
+            ".sidebar"
+        );
+
+    if (!sidebar) {
+        return;
+    }
+
+    if (
+        sidebar.classList.contains(
+            "mobile-open"
+        )
+    ) {
+        closeMobileSidebar();
+    } else {
+        openMobileSidebar();
+    }
+}
+
+
+/* =====================================================
    Chats
 ===================================================== */
 
@@ -69,7 +173,8 @@ async function loadChats() {
         return;
     }
 
-    const chats = await response.json();
+    const chats =
+        await response.json();
 
     renderChats(chats);
 }
@@ -77,29 +182,43 @@ async function loadChats() {
 
 function renderChats(chats) {
     const chatList =
-        document.getElementById("chat-list");
+        document.getElementById(
+            "chat-list"
+        );
 
     chatList.innerHTML = "";
 
     for (const chat of chats) {
         const element =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
-        element.className = "chat-item";
-        element.dataset.chatId = chat.id;
+        element.className =
+            "chat-item";
+
+        element.dataset.chatId =
+            chat.id;
 
         if (chat.id === currentChatId) {
-            element.classList.add("active");
+            element.classList.add(
+                "active"
+            );
         }
 
 
         /* Chat title */
 
         const title =
-            document.createElement("span");
+            document.createElement(
+                "span"
+            );
 
-        title.className = "chat-title";
-        title.textContent = chat.title;
+        title.className =
+            "chat-title";
+
+        title.textContent =
+            chat.title;
 
         title.addEventListener(
             "click",
@@ -110,7 +229,9 @@ function renderChats(chats) {
         /* Menu wrapper */
 
         const menuWrapper =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
         menuWrapper.className =
             "chat-menu-wrapper";
@@ -119,20 +240,29 @@ function renderChats(chats) {
         /* Menu button */
 
         const menuButton =
-            document.createElement("button");
+            document.createElement(
+                "button"
+            );
 
-        menuButton.type = "button";
+        menuButton.type =
+            "button";
+
         menuButton.className =
             "chat-menu-button";
 
-        menuButton.textContent = "⋯";
-        menuButton.title = "Chat options";
+        menuButton.textContent =
+            "⋯";
+
+        menuButton.title =
+            "Chat options";
 
 
         /* Dropdown */
 
         const dropdown =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
         dropdown.className =
             "chat-dropdown";
@@ -141,9 +271,13 @@ function renderChats(chats) {
         /* Rename button */
 
         const renameButton =
-            document.createElement("button");
+            document.createElement(
+                "button"
+            );
 
-        renameButton.type = "button";
+        renameButton.type =
+            "button";
+
         renameButton.className =
             "chat-dropdown-item";
 
@@ -170,9 +304,13 @@ function renderChats(chats) {
         /* Delete button */
 
         const deleteButton =
-            document.createElement("button");
+            document.createElement(
+                "button"
+            );
 
-        deleteButton.type = "button";
+        deleteButton.type =
+            "button";
+
         deleteButton.className =
             "chat-dropdown-item chat-dropdown-delete";
 
@@ -298,6 +436,8 @@ async function createChat() {
     await loadChats();
     await loadMessages();
 
+    closeMobileSidebar();
+
     document
         .getElementById(
             "message-input"
@@ -311,6 +451,7 @@ async function selectChat(chatId) {
         chatId;
 
     closeAllChatMenus();
+    closeMobileSidebar();
 
     await loadChats();
     await loadMessages();
@@ -440,7 +581,9 @@ function clearChatView() {
 
 function renderMarkdown(markdownText) {
     const rawHtml =
-        marked.parse(markdownText);
+        marked.parse(
+            markdownText
+        );
 
     return DOMPurify.sanitize(
         rawHtml,
@@ -500,7 +643,9 @@ function addCopyButtons(container) {
                 "button"
             );
 
-        button.type = "button";
+        button.type =
+            "button";
+
         button.className =
             "copy-code-button";
 
@@ -604,6 +749,22 @@ function appendMessage(message) {
             "messages"
         );
 
+    const emptyState =
+        document.getElementById(
+            "empty-state"
+        );
+
+    /*
+        Hide empty state as soon as
+        a message is displayed.
+    */
+
+    if (emptyState) {
+        emptyState.style.display =
+            "none";
+    }
+
+
     const element =
         document.createElement(
             "div"
@@ -697,6 +858,7 @@ function scrollToBottom() {
         container.scrollHeight;
 }
 
+
 /* =====================================================
    AI Loading Indicator
 ===================================================== */
@@ -729,7 +891,8 @@ function showThinkingIndicator() {
     role.className =
         "message-role";
 
-    role.textContent = "AI";
+    role.textContent =
+        "AI";
 
 
     /* Thinking content */
@@ -750,6 +913,11 @@ function showThinkingIndicator() {
 
     dots.className =
         "typing-dots";
+
+    dots.setAttribute(
+        "role",
+        "status"
+    );
 
     dots.setAttribute(
         "aria-label",
@@ -825,6 +993,20 @@ async function sendMessage(content) {
     }
 
 
+    /*
+        Save the chat that owns this
+        request.
+
+        This prevents an AI response
+        from appearing in another chat
+        if the user switches conversations
+        while the request is running.
+    */
+
+    const requestChatId =
+        currentChatId;
+
+
     /* Show user message immediately */
 
     appendMessage({
@@ -847,12 +1029,15 @@ async function sendMessage(content) {
 
 
     /*
-        Disable input while AI
-        generates a response.
+        Prevent another request while
+        the AI generates a response.
     */
 
-    sendButton.disabled = true;
-    input.disabled = true;
+    sendButton.disabled =
+        true;
+
+    input.disabled =
+        true;
 
 
     /*
@@ -865,7 +1050,7 @@ async function sendMessage(content) {
 
     try {
         const response = await apiFetch(
-            `/api/chats/${currentChatId}/messages/`,
+            `/api/chats/${requestChatId}/messages/`,
             {
                 method: "POST",
 
@@ -896,28 +1081,32 @@ async function sendMessage(content) {
 
 
         /*
-            Remove loading animation
-            before showing AI answer.
+            Only update the visible chat
+            if the user is still viewing
+            the chat that sent the request.
         */
 
-        removeThinkingIndicator(
-            thinkingIndicator
-        );
+        if (
+            currentChatId === requestChatId
+        ) {
+            removeThinkingIndicator(
+                thinkingIndicator
+            );
 
+            appendMessage(
+                data.assistant_message
+            );
 
-        appendMessage(
-            data.assistant_message
-        );
+            scrollToBottom();
+        }
 
 
         /*
-            Reload sidebar because
+            Reload sidebar because the
             automatic title may change.
         */
 
         await loadChats();
-
-        scrollToBottom();
 
     } catch (error) {
         console.error(
@@ -926,19 +1115,22 @@ async function sendMessage(content) {
         );
 
 
-        removeThinkingIndicator(
-            thinkingIndicator
-        );
+        if (
+            currentChatId === requestChatId
+        ) {
+            removeThinkingIndicator(
+                thinkingIndicator
+            );
 
+            appendMessage({
+                role: "assistant",
 
-        appendMessage({
-            role: "assistant",
+                content:
+                    "Something went wrong. Please try again.",
+            });
 
-            content:
-                "Something went wrong. Please try again.",
-        });
-
-        scrollToBottom();
+            scrollToBottom();
+        }
 
     } finally {
         /*
@@ -951,10 +1143,23 @@ async function sendMessage(content) {
         );
 
 
-        sendButton.disabled = false;
-        input.disabled = false;
+        sendButton.disabled =
+            false;
 
-        input.focus();
+        input.disabled =
+            false;
+
+
+        /*
+            Focus only when the user
+            is still in the same chat.
+        */
+
+        if (
+            currentChatId === requestChatId
+        ) {
+            input.focus();
+        }
     }
 }
 
@@ -998,7 +1203,8 @@ document
                 return;
             }
 
-            input.value = "";
+            input.value =
+                "";
 
             await sendMessage(
                 content
@@ -1033,6 +1239,64 @@ document
             }
         }
     );
+
+
+/* =====================================================
+   Mobile Sidebar Events
+===================================================== */
+
+const sidebarToggleButton =
+    document.getElementById(
+        "sidebar-toggle-button"
+    );
+
+const sidebarOverlay =
+    document.getElementById(
+        "sidebar-overlay"
+    );
+
+
+if (sidebarToggleButton) {
+    sidebarToggleButton.addEventListener(
+        "click",
+        (event) => {
+            event.stopPropagation();
+
+            toggleMobileSidebar();
+        }
+    );
+}
+
+
+if (sidebarOverlay) {
+    sidebarOverlay.addEventListener(
+        "click",
+        closeMobileSidebar
+    );
+}
+
+
+document.addEventListener(
+    "keydown",
+    (event) => {
+        if (event.key === "Escape") {
+            closeMobileSidebar();
+            closeAllChatMenus();
+        }
+    }
+);
+
+
+window.addEventListener(
+    "resize",
+    () => {
+        if (
+            window.innerWidth > 768
+        ) {
+            closeMobileSidebar();
+        }
+    }
+);
 
 
 /* =====================================================

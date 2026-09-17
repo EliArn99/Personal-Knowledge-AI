@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "apps.chats",
     "apps.ai",
     "apps.frontend",
+    "apps.documents",
 ]
 
 

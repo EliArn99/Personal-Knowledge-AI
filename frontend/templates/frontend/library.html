@@ -1,0 +1,222 @@
+{% extends "frontend/base.html" %}
+{% load static %}
+
+{% block title %}
+Library | Personal Knowledge AI
+{% endblock %}
+
+{% block content %}
+
+<div class="library-page">
+
+    <!-- Header -->
+
+    <header class="library-header">
+
+        <div>
+
+            <h1 class="library-title">
+                Personal Library
+            </h1>
+
+            <p class="library-subtitle">
+                Upload and manage documents for your personal knowledge base.
+            </p>
+
+        </div>
+
+
+        <div class="library-header-actions">
+
+            <a
+                href="/chat/"
+                class="btn btn-outline-dark">
+                Back to Chat
+            </a>
+
+            <button
+                id="logout-button"
+                class="btn btn-dark"
+                type="button">
+                Logout
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <!-- Main content -->
+
+    <main class="library-content">
+
+        <!-- Upload -->
+
+        <section class="library-upload-card">
+
+            <div class="library-section-heading">
+
+                <div>
+
+                    <h2>
+                        Upload document
+                    </h2>
+
+                    <p>
+                        Supported formats: PDF, TXT and Markdown.
+                        Maximum file size: 10 MB.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="upload-error"
+                class="alert alert-danger d-none">
+            </div>
+
+
+            <form
+                id="document-upload-form">
+
+                <div class="row g-3">
+
+                    <div class="col-12 col-md-5">
+
+                        <label
+                            for="document-title"
+                            class="form-label">
+                            Title
+                        </label>
+
+                        <input
+                            id="document-title"
+                            name="title"
+                            class="form-control"
+                            type="text"
+                            maxlength="255"
+                            placeholder="Optional document title"
+                        >
+
+                    </div>
+
+
+                    <div class="col-12 col-md-5">
+
+                        <label
+                            for="document-file"
+                            class="form-label">
+                            File
+                        </label>
+
+                        <input
+                            id="document-file"
+                            name="file"
+                            class="form-control"
+                            type="file"
+                            accept=".pdf,.txt,.md"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div
+                        class="col-12 col-md-2 d-flex align-items-end">
+
+                        <button
+                            id="upload-button"
+                            class="btn btn-dark w-100"
+                            type="submit">
+                            Upload
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </section>
+
+
+        <!-- Documents -->
+
+        <section class="library-documents-card">
+
+            <div class="library-section-heading">
+
+                <div>
+
+                    <h2>
+                        Your documents
+                    </h2>
+
+                    <p id="document-count">
+                        Loading...
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="library-loading"
+                class="library-loading">
+
+                <div
+                    class="spinner-border spinner-border-sm"
+                    role="status">
+                </div>
+
+                <span>
+                    Loading documents...
+                </span>
+
+            </div>
+
+
+            <div
+                id="library-empty-state"
+                class="library-empty-state d-none">
+
+                <div class="library-empty-icon">
+                    📄
+                </div>
+
+                <h3>
+                    No documents yet
+                </h3>
+
+                <p>
+                    Upload your first document to start building
+                    your personal knowledge library.
+                </p>
+
+            </div>
+
+
+            <div
+                id="document-list"
+                class="document-list">
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script
+    src="{% static 'frontend/js/library.js' %}">
+</script>
+
+{% endblock %}

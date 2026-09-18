@@ -39,3 +39,12 @@ def chat_view(request):
         request,
         "frontend/chat.html",
     )
+
+
+@login_required(login_url="/login/")
+@ensure_csrf_cookie
+def library_view(request):
+    return render(
+        request,
+        "frontend/library.html",
+    )

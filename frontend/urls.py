@@ -1,4 +1,5 @@
 from django.urls import path
+from apps.frontend.views import library_view
 
 from .views import (
     chat_view,
@@ -6,7 +7,6 @@ from .views import (
     login_view,
     register_view,
 )
-
 
 urlpatterns = [
     path(
@@ -31,5 +31,11 @@ urlpatterns = [
         "chat/",
         chat_view,
         name="chat",
+    ),
+
+    path(
+        "library/",
+        library_view,
+        name="library",
     ),
 ]

@@ -1465,3 +1465,17 @@ body {
         flex: 1;
     }
 }
+
+/* =====================================================
+   Document Extraction Status
+===================================================== */
+
+.document-extraction-error {
+    margin-top: 8px;
+
+    color: #b42318;
+
+    font-size: 0.85rem;
+
+    line-height: 1.4;
+}

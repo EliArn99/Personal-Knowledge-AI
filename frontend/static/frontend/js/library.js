@@ -127,7 +127,7 @@ function formatDate(dateString) {
 function getFileTypeLabel(fileType) {
     switch (
         fileType.toLowerCase()
-    ) {
+        ) {
         case "pdf":
             return "PDF";
 
@@ -262,7 +262,7 @@ function renderDocuments(documents) {
     for (
         const documentData
         of documents
-    ) {
+        ) {
         list.appendChild(
             createDocumentElement(
                 documentData
@@ -347,20 +347,31 @@ function createDocumentElement(
     metadata.className =
         "document-metadata";
 
-    metadata.textContent =
-        [
-            getFileTypeLabel(
-                documentData.file_type
-            ),
+    const extractionLabels = {
+        pending: "Pending extraction",
+        ready: "Text ready",
+        failed: "Extraction failed",
+    };
 
-            formatFileSize(
-                documentData.file_size
-            ),
 
-            formatDate(
-                documentData.created_at
-            ),
-        ].join(" · ");
+    metadata.textContent = [
+        getFileTypeLabel(
+            documentData.file_type
+        ),
+
+        formatFileSize(
+            documentData.file_size
+        ),
+
+        formatDate(
+            documentData.created_at
+        ),
+
+        extractionLabels[
+            documentData.extraction_status
+            ] || "Unknown status",
+
+    ].join(" · ");
 
 
     info.appendChild(
@@ -374,6 +385,28 @@ function createDocumentElement(
     info.appendChild(
         metadata
     );
+
+    if (
+        documentData.extraction_status
+        === "failed"
+    ) {
+
+        const extractionError =
+            document.createElement(
+                "div"
+            );
+
+        extractionError.className =
+            "document-extraction-error";
+
+        extractionError.textContent =
+            documentData.extraction_error ||
+            "Text extraction failed.";
+
+        info.appendChild(
+            extractionError
+        );
+    }
 
 
     /* Actions */
@@ -618,7 +651,7 @@ async function renameDocument(
     if (
         !cleanedTitle ||
         cleanedTitle ===
-            documentData.title
+        documentData.title
     ) {
         return;
     }

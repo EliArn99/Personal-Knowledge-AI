@@ -1,8 +1,9 @@
 from django.urls import path
 
 from .views import (
-    DocumentDetailAPIView,
     DocumentListCreateAPIView,
+    DocumentDetailAPIView,
+    DocumentDownloadAPIView,
 )
 
 
@@ -11,6 +12,12 @@ urlpatterns = [
         "",
         DocumentListCreateAPIView.as_view(),
         name="document-list-create",
+    ),
+
+    path(
+        "<int:pk>/download/",
+        DocumentDownloadAPIView.as_view(),
+        name="document-download",
     ),
 
     path(

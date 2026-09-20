@@ -1,5 +1,7 @@
 from pathlib import Path
 
+from django.urls import reverse
+
 from rest_framework import serializers
 
 from .models import Document
@@ -19,6 +21,11 @@ ALLOWED_EXTENSIONS = {
 class DocumentSerializer(
     serializers.ModelSerializer
 ):
+
+    download_url = (
+        serializers.SerializerMethodField()
+    )
+
     class Meta:
         model = Document
 
@@ -26,29 +33,46 @@ class DocumentSerializer(
             "id",
             "title",
             "file",
+            "download_url",
             "original_filename",
             "file_type",
             "file_size",
+            "extraction_status",
+            "extraction_error",
             "created_at",
             "updated_at",
         )
 
         read_only_fields = (
             "id",
+            "download_url",
             "original_filename",
             "file_type",
             "file_size",
+            "extraction_status",
+            "extraction_error",
             "created_at",
             "updated_at",
         )
 
         extra_kwargs = {
+            "file": {
+                "write_only": True,
+            },
+
             "title": {
                 "required": False,
                 "allow_blank": True,
             },
         }
 
+    def get_download_url(self, obj):
+        return reverse(
+            "document-download",
+            kwargs={
+                "pk": obj.pk,
+            },
+        )
 
     def validate_file(self, file):
         extension = (
@@ -67,6 +91,11 @@ class DocumentSerializer(
                 "PDF, TXT, MD."
             )
 
+        if file.size == 0:
+            raise serializers.ValidationError(
+                "Cannot upload an empty file."
+            )
+
         if file.size > MAX_FILE_SIZE:
             raise serializers.ValidationError(
                 "File is too large. "
@@ -75,6 +104,18 @@ class DocumentSerializer(
 
         return file
 
+    def validate_title(self, value):
+        title = value.strip()
+
+        if (
+            self.instance is not None
+            and not title
+        ):
+            raise serializers.ValidationError(
+                "Document title cannot be empty."
+            )
+
+        return title
 
     def validate(self, attrs):
         if (
@@ -91,7 +132,6 @@ class DocumentSerializer(
             )
 
         return attrs
-
 
     def create(self, validated_data):
         file = validated_data["file"]
@@ -140,4 +180,21 @@ class DocumentSerializer(
 
         return super().create(
             validated_data
+        )
+
+
+class DocumentDetailSerializer(
+    DocumentSerializer
+):
+
+    class Meta(DocumentSerializer.Meta):
+
+        fields = (
+            DocumentSerializer.Meta.fields
+            + ("extracted_text",)
+        )
+
+        read_only_fields = (
+            DocumentSerializer.Meta.read_only_fields
+            + ("extracted_text",)
         )

@@ -68,6 +68,22 @@ class Document(models.Model):
         default="",
     )
 
+    class IndexingStatus(models.TextChoices):
+        PENDING = "pending", "Pending"
+        READY = "ready", "Ready"
+        FAILED = "failed", "Failed"
+
+    indexing_status = models.CharField(
+        max_length=20,
+        choices=IndexingStatus.choices,
+        default=IndexingStatus.PENDING,
+    )
+
+    indexing_error = models.TextField(
+        blank=True,
+        default="",
+    )
+
     created_at = models.DateTimeField(
         auto_now_add=True,
     )

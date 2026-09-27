@@ -28,6 +28,10 @@ from .services.extraction import (
     process_document,
 )
 
+from .services.indexing_pipeline import (
+    process_document_indexing,
+)
+
 
 # =====================================================
 # List / Upload
@@ -56,21 +60,28 @@ class DocumentListCreateAPIView(
         )
 
     def perform_create(
-        self,
-        serializer,
+            self,
+            serializer,
     ):
-
-        # Save the uploaded document
+        # 1. Save the uploaded file.
 
         document = serializer.save(
             user=self.request.user
         )
 
-        # Extract and save its text
+        # 2. Extract and save the text.
 
         process_document(
             document
         )
+
+        # 3. Create chunks and embeddings
+        # only if text extraction succeeded.
+
+        if document.extraction_status == "ready":
+            process_document_indexing(
+                document
+            )
 
 
 # =====================================================

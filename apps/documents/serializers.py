@@ -39,6 +39,8 @@ class DocumentSerializer(
             "file_size",
             "extraction_status",
             "extraction_error",
+            "indexing_status",
+            "indexing_error",
             "created_at",
             "updated_at",
         )
@@ -51,6 +53,8 @@ class DocumentSerializer(
             "file_size",
             "extraction_status",
             "extraction_error",
+            "indexing_status",
+            "indexing_error",
             "created_at",
             "updated_at",
         )

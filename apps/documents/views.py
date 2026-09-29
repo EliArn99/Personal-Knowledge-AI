@@ -22,15 +22,22 @@ from .models import Document
 from .serializers import (
     DocumentSerializer,
     DocumentDetailSerializer,
+    SemanticSearchSerializer
 )
 
 from .services.extraction import (
     process_document,
 )
+from .services.search import (
+    semantic_search,
+)
 
 from .services.indexing_pipeline import (
     process_document_indexing,
 )
+
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 
 # =====================================================
@@ -40,7 +47,6 @@ from .services.indexing_pipeline import (
 class DocumentListCreateAPIView(
     generics.ListCreateAPIView
 ):
-
     serializer_class = (
         DocumentSerializer
     )
@@ -91,7 +97,6 @@ class DocumentListCreateAPIView(
 class DocumentDetailAPIView(
     generics.RetrieveUpdateDestroyAPIView
 ):
-
     serializer_class = (
         DocumentDetailSerializer
     )
@@ -118,15 +123,14 @@ class DocumentDetailAPIView(
 class DocumentDownloadAPIView(
     APIView
 ):
-
     permission_classes = (
         IsAuthenticated,
     )
 
     def get(
-        self,
-        request,
-        pk,
+            self,
+            request,
+            pk,
     ):
 
         document = get_object_or_404(
@@ -154,4 +158,82 @@ class DocumentDownloadAPIView(
             content_type=(
                 "application/octet-stream"
             ),
+        )
+
+
+class DocumentSemanticSearchAPIView(
+    APIView
+):
+    permission_classes = (
+        IsAuthenticated,
+    )
+
+    def post(
+            self,
+            request,
+    ):
+        serializer = (
+            SemanticSearchSerializer(
+                data=request.data
+            )
+        )
+
+        serializer.is_valid(
+            raise_exception=True
+        )
+
+        query = (
+            serializer.validated_data[
+                "query"
+            ]
+        )
+
+        limit = (
+            serializer.validated_data[
+                "limit"
+            ]
+        )
+
+        results = semantic_search(
+            user=request.user,
+            query=query,
+            limit=limit,
+        )
+
+        response_data = []
+
+        for result in results:
+            chunk = result["chunk"]
+
+            response_data.append(
+                {
+                    "document_id":
+                        chunk.document_id,
+
+                    "document_title":
+                        chunk.document.title,
+
+                    "chunk_index":
+                        chunk.chunk_index,
+
+                    "score":
+                        round(
+                            result["score"],
+                            6,
+                        ),
+
+                    "content":
+                        chunk.content,
+                }
+            )
+
+        return Response(
+            {
+                "query": query,
+                "count": len(
+                    response_data
+                ),
+                "results":
+                    response_data,
+            }
         )

@@ -202,3 +202,18 @@ class DocumentDetailSerializer(
             DocumentSerializer.Meta.read_only_fields
             + ("extracted_text",)
         )
+
+class SemanticSearchSerializer(
+    serializers.Serializer
+):
+    query = serializers.CharField(
+        max_length=2000,
+        trim_whitespace=True,
+    )
+
+    limit = serializers.IntegerField(
+        required=False,
+        default=5,
+        min_value=1,
+        max_value=20,
+    )

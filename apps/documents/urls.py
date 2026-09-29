@@ -4,8 +4,8 @@ from .views import (
     DocumentListCreateAPIView,
     DocumentDetailAPIView,
     DocumentDownloadAPIView,
+    DocumentSemanticSearchAPIView
 )
-
 
 urlpatterns = [
     path(
@@ -24,5 +24,11 @@ urlpatterns = [
         "<int:pk>/",
         DocumentDetailAPIView.as_view(),
         name="document-detail",
+    ),
+
+    path(
+        "search/",
+        DocumentSemanticSearchAPIView.as_view(),
+        name="document-semantic-search",
     ),
 ]

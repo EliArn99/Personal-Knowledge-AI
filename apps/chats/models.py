@@ -27,9 +27,9 @@ class Chat(models.Model):
 
     def __str__(self):
         return self.title
-    
-    
-    
+
+
+
 class Message(models.Model):
     class Role(models.TextChoices):
         USER = "user", "User"
@@ -51,6 +51,11 @@ class Message(models.Model):
 
     created_at = models.DateTimeField(
         auto_now_add=True,
+    )
+
+    sources = models.JSONField(
+        default=list,
+        blank=True,
     )
 
     class Meta:

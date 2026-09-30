@@ -6,9 +6,8 @@ from rest_framework import serializers
 
 from .models import Document
 
-
 MAX_FILE_SIZE = (
-    10 * 1024 * 1024
+        10 * 1024 * 1024
 )
 
 ALLOWED_EXTENSIONS = {
@@ -21,7 +20,6 @@ ALLOWED_EXTENSIONS = {
 class DocumentSerializer(
     serializers.ModelSerializer
 ):
-
     download_url = (
         serializers.SerializerMethodField()
     )
@@ -86,8 +84,8 @@ class DocumentSerializer(
         )
 
         if (
-            extension
-            not in ALLOWED_EXTENSIONS
+                extension
+                not in ALLOWED_EXTENSIONS
         ):
             raise serializers.ValidationError(
                 "Unsupported file type. "
@@ -112,8 +110,8 @@ class DocumentSerializer(
         title = value.strip()
 
         if (
-            self.instance is not None
-            and not title
+                self.instance is not None
+                and not title
         ):
             raise serializers.ValidationError(
                 "Document title cannot be empty."
@@ -123,8 +121,8 @@ class DocumentSerializer(
 
     def validate(self, attrs):
         if (
-            self.instance is not None
-            and "file" in attrs
+                self.instance is not None
+                and "file" in attrs
         ):
             raise serializers.ValidationError(
                 {
@@ -190,18 +188,17 @@ class DocumentSerializer(
 class DocumentDetailSerializer(
     DocumentSerializer
 ):
-
     class Meta(DocumentSerializer.Meta):
-
         fields = (
-            DocumentSerializer.Meta.fields
-            + ("extracted_text",)
+                DocumentSerializer.Meta.fields
+                + ("extracted_text",)
         )
 
         read_only_fields = (
-            DocumentSerializer.Meta.read_only_fields
-            + ("extracted_text",)
+                DocumentSerializer.Meta.read_only_fields
+                + ("extracted_text",)
         )
+
 
 class SemanticSearchSerializer(
     serializers.Serializer
@@ -216,4 +213,27 @@ class SemanticSearchSerializer(
         default=5,
         min_value=1,
         max_value=20,
+    )
+
+
+class DocumentQuestionSerializer(
+    serializers.Serializer
+):
+    question = serializers.CharField(
+        max_length=2000,
+        trim_whitespace=True,
+    )
+
+    limit = serializers.IntegerField(
+        required=False,
+        default=5,
+        min_value=1,
+        max_value=20,
+    )
+
+    min_score = serializers.FloatField(
+        required=False,
+        default=0.30,
+        min_value=-1.0,
+        max_value=1.0,
     )

@@ -22,7 +22,8 @@ from .models import Document
 from .serializers import (
     DocumentSerializer,
     DocumentDetailSerializer,
-    SemanticSearchSerializer
+    SemanticSearchSerializer,
+    DocumentQuestionSerializer
 )
 
 from .services.extraction import (
@@ -38,6 +39,11 @@ from .services.indexing_pipeline import (
 
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+from apps.ai.services.rag_service import (
+    RAGServiceError,
+    answer_with_documents,
+)
 
 
 # =====================================================
@@ -236,4 +242,64 @@ class DocumentSemanticSearchAPIView(
                 "results":
                     response_data,
             }
+        )
+
+
+class DocumentAskAPIView(
+    APIView
+):
+    permission_classes = (
+        IsAuthenticated,
+    )
+
+    def post(
+            self,
+            request,
+    ):
+        serializer = (
+            DocumentQuestionSerializer(
+                data=request.data
+            )
+        )
+
+        serializer.is_valid(
+            raise_exception=True
+        )
+
+        question = (
+            serializer.validated_data[
+                "question"
+            ]
+        )
+
+        limit = (
+            serializer.validated_data[
+                "limit"
+            ]
+        )
+
+        min_score = (
+            serializer.validated_data[
+                "min_score"
+            ]
+        )
+
+        try:
+            result = answer_with_documents(
+                user=request.user,
+                question=question,
+                limit=limit,
+                min_score=min_score,
+            )
+
+        except RAGServiceError as exc:
+            return Response(
+                {
+                    "detail": str(exc),
+                },
+                status=500,
+            )
+
+        return Response(
+            result
         )

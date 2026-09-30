@@ -1,37 +1,65 @@
-from rest_framework import serializers
+from django.conf import settings
+from django.db import models
 
-from .models import Chat, Message
 
+class Chat(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="chats",
+    )
 
-class ChatSerializer(serializers.ModelSerializer):
+    title = models.CharField(
+        max_length=255,
+        default="New Chat",
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True,
+    )
+
     class Meta:
-        model = Chat
-        fields = (
-            "id",
-            "title",
-            "created_at",
-            "updated_at",
-        )
+        ordering = ["-updated_at"]
 
-        read_only_fields = (
-            "id",
-            "created_at",
-            "updated_at",
-        )
+    def __str__(self):
+        return self.title
 
 
-class MessageSerializer(serializers.ModelSerializer):
+
+class Message(models.Model):
+    class Role(models.TextChoices):
+        USER = "user", "User"
+        ASSISTANT = "assistant", "Assistant"
+        SYSTEM = "system", "System"
+
+    chat = models.ForeignKey(
+        Chat,
+        on_delete=models.CASCADE,
+        related_name="messages",
+    )
+
+    role = models.CharField(
+        max_length=20,
+        choices=Role.choices,
+    )
+
+    content = models.TextField()
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    sources = models.JSONField(
+        default=list,
+        blank=True,
+    )
+
     class Meta:
-        model = Message
-        fields = (
-            "id",
-            "role",
-            "content",
-            "created_at",
-        )
+        ordering = ["created_at"]
 
-        read_only_fields = (
-            "id",
-            "role",
-            "created_at",
-        )
+    def __str__(self):
+        return f"{self.role}: {self.content[:50]}"

@@ -957,6 +957,60 @@ function showThinkingIndicator() {
         content
     );
 
+    if (
+        message.role === "assistant" &&
+        Array.isArray(message.sources) &&
+        message.sources.length > 0
+    ) {
+        const sources =
+            document.createElement(
+                "div"
+            );
+
+        sources.className =
+            "message-sources";
+
+        const sourcesTitle =
+            document.createElement(
+                "div"
+            );
+
+        sourcesTitle.className =
+            "message-sources-title";
+
+        sourcesTitle.textContent =
+            "Sources";
+
+        sources.appendChild(
+            sourcesTitle
+        );
+
+        for (
+            const source
+            of message.sources
+            ) {
+            const sourceItem =
+                document.createElement(
+                    "div"
+                );
+
+            sourceItem.className =
+                "message-source-item";
+
+            sourceItem.textContent =
+                `${source.document_title} · ` +
+                `Chunk ${source.chunk_index}`;
+
+            sources.appendChild(
+                sourceItem
+            );
+        }
+
+        element.appendChild(
+            sources
+        );
+    }
+
     container.appendChild(
         element
     );

@@ -55,6 +55,7 @@ def semantic_search(
     user,
     query,
     limit=5,
+    min_score=0.30,
 ):
     query = query.strip()
 
@@ -86,6 +87,8 @@ def semantic_search(
             query_embedding,
             chunk.embedding,
         )
+        if similarity < min_score:
+            continue
 
         results.append(
             {

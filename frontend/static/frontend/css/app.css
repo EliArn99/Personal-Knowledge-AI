@@ -1479,3 +1479,33 @@ body {
 
     line-height: 1.4;
 }
+
+/* =====================================================
+   Message Sources
+===================================================== */
+
+.message-sources {
+    margin-top: 14px;
+
+    padding-top: 10px;
+
+    border-top:
+        1px solid
+        #eeeeee;
+
+    font-size: 0.82rem;
+}
+
+.message-sources-title {
+    margin-bottom: 5px;
+
+    color: #777777;
+
+    font-weight: 600;
+}
+
+.message-source-item {
+    margin-top: 3px;
+
+    color: #555555;
+}

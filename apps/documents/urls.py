@@ -4,7 +4,8 @@ from .views import (
     DocumentListCreateAPIView,
     DocumentDetailAPIView,
     DocumentDownloadAPIView,
-    DocumentSemanticSearchAPIView
+    DocumentSemanticSearchAPIView,
+    DocumentAskAPIView
 )
 
 urlpatterns = [
@@ -12,6 +13,18 @@ urlpatterns = [
         "",
         DocumentListCreateAPIView.as_view(),
         name="document-list-create",
+    ),
+
+    path(
+        "search/",
+        DocumentSemanticSearchAPIView.as_view(),
+        name="document-semantic-search",
+    ),
+
+    path(
+        "ask/",
+        DocumentAskAPIView.as_view(),
+        name="document-ask",
     ),
 
     path(
@@ -24,11 +37,5 @@ urlpatterns = [
         "<int:pk>/",
         DocumentDetailAPIView.as_view(),
         name="document-detail",
-    ),
-
-    path(
-        "search/",
-        DocumentSemanticSearchAPIView.as_view(),
-        name="document-semantic-search",
     ),
 ]

@@ -245,17 +245,12 @@ class DocumentSemanticSearchAPIView(
         )
 
 
-class DocumentAskAPIView(
-    APIView
-):
+class DocumentAskAPIView(APIView):
     permission_classes = (
         IsAuthenticated,
     )
 
-    def post(
-            self,
-            request,
-    ):
+    def post(self, request):
         serializer = (
             DocumentQuestionSerializer(
                 data=request.data
@@ -300,6 +295,4 @@ class DocumentAskAPIView(
                 status=500,
             )
 
-        return Response(
-            result
-        )
+        return Response(result)

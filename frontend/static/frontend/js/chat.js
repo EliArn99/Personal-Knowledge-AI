@@ -754,11 +754,6 @@ function appendMessage(message) {
             "empty-state"
         );
 
-    /*
-        Hide empty state as soon as
-        a message is displayed.
-    */
-
     if (emptyState) {
         emptyState.style.display =
             "none";
@@ -885,16 +880,22 @@ function appendMessage(message) {
                 "message-source-item";
 
 
-            const sourceTitle =
+            const sourceLink =
                 document.createElement(
-                    "span"
+                    "a"
                 );
 
-            sourceTitle.className =
-                "message-source-title";
+            sourceLink.className =
+                "message-source-link";
 
-            sourceTitle.textContent =
+            sourceLink.href =
+                `/api/documents/${source.document_id}/download/`;
+
+            sourceLink.textContent =
                 source.document_title;
+
+            sourceLink.title =
+                `Open ${source.document_title}`;
 
 
             const sourceChunk =
@@ -910,7 +911,7 @@ function appendMessage(message) {
 
 
             sourceItem.appendChild(
-                sourceTitle
+                sourceLink
             );
 
             sourceItem.appendChild(

@@ -811,7 +811,6 @@ function appendMessage(message) {
     content.className =
         "message-content";
 
-
     if (message.role === "assistant") {
         content.innerHTML =
             renderMarkdown(
@@ -830,6 +829,109 @@ function appendMessage(message) {
     element.appendChild(
         content
     );
+
+
+    /* Sources */
+
+    if (
+        message.role === "assistant" &&
+        Array.isArray(message.sources) &&
+        message.sources.length > 0
+    ) {
+        const sourcesContainer =
+            document.createElement(
+                "div"
+            );
+
+        sourcesContainer.className =
+            "message-sources";
+
+
+        const sourcesTitle =
+            document.createElement(
+                "div"
+            );
+
+        sourcesTitle.className =
+            "message-sources-title";
+
+        sourcesTitle.textContent =
+            "Sources";
+
+        sourcesContainer.appendChild(
+            sourcesTitle
+        );
+
+
+        const sourcesList =
+            document.createElement(
+                "ul"
+            );
+
+        sourcesList.className =
+            "message-sources-list";
+
+
+        for (
+            const source
+            of message.sources
+            ) {
+            const sourceItem =
+                document.createElement(
+                    "li"
+                );
+
+            sourceItem.className =
+                "message-source-item";
+
+
+            const sourceTitle =
+                document.createElement(
+                    "span"
+                );
+
+            sourceTitle.className =
+                "message-source-title";
+
+            sourceTitle.textContent =
+                source.document_title;
+
+
+            const sourceChunk =
+                document.createElement(
+                    "span"
+                );
+
+            sourceChunk.className =
+                "message-source-chunk";
+
+            sourceChunk.textContent =
+                ` · Chunk ${source.chunk_index}`;
+
+
+            sourceItem.appendChild(
+                sourceTitle
+            );
+
+            sourceItem.appendChild(
+                sourceChunk
+            );
+
+            sourcesList.appendChild(
+                sourceItem
+            );
+        }
+
+
+        sourcesContainer.appendChild(
+            sourcesList
+        );
+
+        element.appendChild(
+            sourcesContainer
+        );
+    }
+
 
     container.appendChild(
         element

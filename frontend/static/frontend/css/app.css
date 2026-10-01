@@ -1486,26 +1486,30 @@ body {
 
 .message-sources {
     margin-top: 14px;
-
     padding-top: 10px;
-
-    border-top:
-        1px solid
-        #eeeeee;
-
-    font-size: 0.82rem;
+    border-top: 1px solid rgba(128, 128, 128, 0.25);
+    font-size: 0.85rem;
 }
 
 .message-sources-title {
-    margin-bottom: 5px;
-
-    color: #777777;
-
+    margin-bottom: 6px;
     font-weight: 600;
+    opacity: 0.8;
+}
+
+.message-sources-list {
+    margin: 0;
+    padding-left: 18px;
 }
 
 .message-source-item {
-    margin-top: 3px;
+    margin-bottom: 4px;
+}
 
-    color: #555555;
+.message-source-title {
+    font-weight: 500;
+}
+
+.message-source-chunk {
+    opacity: 0.7;
 }

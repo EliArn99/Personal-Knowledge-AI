@@ -14,13 +14,13 @@ class RAGServiceError(Exception):
 
 
 def build_context(
-    search_results,
+        search_results,
 ):
     context_parts = []
 
     for index, result in enumerate(
-        search_results,
-        start=1,
+            search_results,
+            start=1,
     ):
         chunk = result["chunk"]
 
@@ -43,7 +43,7 @@ def build_context(
 
 
 def build_sources(
-    search_results,
+        search_results,
 ):
     sources = []
 
@@ -73,10 +73,10 @@ def build_sources(
 
 
 def answer_with_documents(
-    user,
-    question,
-    limit=5,
-    min_score=0.30,
+        user,
+        question,
+        limit=5,
+        min_score=0.30,
 ):
     question = question.strip()
 
@@ -125,8 +125,10 @@ def answer_with_documents(
                 "are not supported by the "
                 "document context.\n\n"
 
-                "When useful, refer to the "
-                "source documents by title.\n\n"
+                "Do not add citations, source names, "
+                "chunk numbers, or reference markers "
+                "to the answer. Sources are displayed "
+                "separately by the application.\n\n"
 
                 "DOCUMENT CONTEXT:\n\n"
                 f"{context}\n\n"

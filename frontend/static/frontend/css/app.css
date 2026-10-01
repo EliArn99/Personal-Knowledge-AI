@@ -1513,3 +1513,20 @@ body {
 .message-source-chunk {
     opacity: 0.7;
 }
+
+
+.message-source-link {
+    color: inherit;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.message-source-link:hover {
+    text-decoration: underline;
+}
+
+.message-source-link:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+    border-radius: 2px;
+}

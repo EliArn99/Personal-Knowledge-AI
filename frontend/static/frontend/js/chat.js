@@ -689,7 +689,6 @@ function addCopyButtons(container) {
     }
 }
 
-
 /* =====================================================
    Messages
 ===================================================== */
@@ -759,7 +758,6 @@ function appendMessage(message) {
             "none";
     }
 
-
     const element =
         document.createElement(
             "div"
@@ -816,7 +814,6 @@ function appendMessage(message) {
             message.content;
     }
 
-
     element.appendChild(
         role
     );
@@ -870,7 +867,7 @@ function appendMessage(message) {
         for (
             const source
             of message.sources
-            ) {
+        ) {
             const sourceItem =
                 document.createElement(
                     "li"
@@ -984,8 +981,6 @@ function showThinkingIndicator() {
     );
 
 
-    /* AI role */
-
     const role =
         document.createElement(
             "div"
@@ -997,8 +992,6 @@ function showThinkingIndicator() {
     role.textContent =
         "AI";
 
-
-    /* Thinking content */
 
     const content =
         document.createElement(
@@ -1059,60 +1052,6 @@ function showThinkingIndicator() {
     element.appendChild(
         content
     );
-
-    if (
-        message.role === "assistant" &&
-        Array.isArray(message.sources) &&
-        message.sources.length > 0
-    ) {
-        const sources =
-            document.createElement(
-                "div"
-            );
-
-        sources.className =
-            "message-sources";
-
-        const sourcesTitle =
-            document.createElement(
-                "div"
-            );
-
-        sourcesTitle.className =
-            "message-sources-title";
-
-        sourcesTitle.textContent =
-            "Sources";
-
-        sources.appendChild(
-            sourcesTitle
-        );
-
-        for (
-            const source
-            of message.sources
-            ) {
-            const sourceItem =
-                document.createElement(
-                    "div"
-                );
-
-            sourceItem.className =
-                "message-source-item";
-
-            sourceItem.textContent =
-                `${source.document_title} · ` +
-                `Chunk ${source.chunk_index}`;
-
-            sources.appendChild(
-                sourceItem
-            );
-        }
-
-        element.appendChild(
-            sources
-        );
-    }
 
     container.appendChild(
         element
@@ -1281,7 +1220,6 @@ async function sendMessage(content) {
 
             appendMessage({
                 role: "assistant",
-
                 content:
                     "Something went wrong. Please try again.",
             });
@@ -1319,7 +1257,6 @@ async function sendMessage(content) {
         }
     }
 }
-
 
 /* =====================================================
    New Chat

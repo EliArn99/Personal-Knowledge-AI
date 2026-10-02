@@ -1,0 +1,92 @@
+{% extends "frontend/base.html" %}
+{% load static %}
+
+{% block title %}
+Document | Personal Knowledge AI
+{% endblock %}
+
+{% block content %}
+
+<div
+        class="document-detail-page"
+        data-document-id="{{ document_id }}"
+>
+    <div class="document-detail-header">
+
+        <a
+                href="{% url 'library' %}"
+                class="document-back-link"
+        >
+            ← Back to Library
+        </a>
+
+        <div class="document-detail-heading">
+
+            <div>
+                <h1
+                        id="document-title"
+                        class="document-detail-title"
+                >
+                    Loading document...
+                </h1>
+
+                <div
+                        id="document-meta"
+                        class="document-detail-meta"
+                ></div>
+            </div>
+
+            <a
+                    id="document-download-button"
+                    class="btn btn-primary"
+                    href="#"
+                    hidden
+            >
+                Download
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <div
+            id="document-loading"
+            class="document-detail-loading"
+    >
+        Loading document...
+    </div>
+
+
+    <div
+            id="document-error"
+            class="alert alert-danger"
+            hidden
+    ></div>
+
+
+    <section
+            id="document-content-section"
+            class="document-content-section"
+            hidden
+    >
+        <h2 class="document-content-title">
+            Extracted Text
+        </h2>
+
+        <pre
+                id="document-extracted-text"
+                class="document-extracted-text"
+        ></pre>
+    </section>
+
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+<script
+        src="{% static 'frontend/js/document_detail.js' %}"
+></script>
+{% endblock %}

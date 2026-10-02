@@ -867,7 +867,7 @@ function appendMessage(message) {
         for (
             const source
             of message.sources
-        ) {
+            ) {
             const sourceItem =
                 document.createElement(
                     "li"
@@ -886,7 +886,7 @@ function appendMessage(message) {
                 "message-source-link";
 
             sourceLink.href =
-                `/api/documents/${source.document_id}/download/`;
+                `/library/documents/${source.document_id}/`;
 
             sourceLink.textContent =
                 source.document_title;

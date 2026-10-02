@@ -1,5 +1,6 @@
 from django.urls import path
 from apps.frontend.views import library_view
+from . import views
 
 from .views import (
     chat_view,
@@ -37,5 +38,10 @@ urlpatterns = [
         "library/",
         library_view,
         name="library",
+    ),
+    path(
+        "library/documents/<int:document_id>/",
+        views.document_detail_page,
+        name="document-detail-page",
     ),
 ]

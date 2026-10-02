@@ -1,7 +1,7 @@
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect
 from django.views.decorators.csrf import ensure_csrf_cookie
-
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
 
 def home_view(request):
     if request.user.is_authenticated:
@@ -47,4 +47,17 @@ def library_view(request):
     return render(
         request,
         "frontend/library.html",
+    )
+
+@login_required
+def document_detail_page(
+    request,
+    document_id,
+):
+    return render(
+        request,
+        "frontend/document_detail.html",
+        {
+            "document_id": document_id,
+        },
     )

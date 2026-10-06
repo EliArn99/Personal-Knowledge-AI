@@ -2,83 +2,234 @@
 {% load static %}
 
 {% block title %}
-Document | Personal Knowledge AI
+Chat | Personal Knowledge AI
+{% endblock %}
+
+{% block body_class %}
+chat-page-body
 {% endblock %}
 
 {% block content %}
 
-<div
-        class="document-detail-page"
-        data-document-id="{{ document_id }}"
->
-    <div class="document-detail-header">
+<div class="chat-layout">
 
-        <a
-                href="{% url 'library' %}"
-                class="document-back-link"
-        >
-            ← Back to Library
-        </a>
+    <aside class="sidebar">
 
-        <div class="document-detail-heading">
+        <div class="sidebar-header">
 
-            <div>
-                <h1
-                        id="document-title"
-                        class="document-detail-title"
-                >
-                    Loading document...
-                </h1>
+            <div class="sidebar-brand">
 
                 <div
-                        id="document-meta"
-                        class="document-detail-meta"
-                ></div>
+                    class="brand-mark"
+                    aria-hidden="true"
+                >
+                    PK
+                </div>
+
+                <div class="brand-copy">
+
+                    <div class="brand-title">
+                        Personal Knowledge AI
+                    </div>
+
+                    <div class="brand-subtitle">
+                        Your private AI workspace
+                    </div>
+
+                </div>
+
             </div>
 
-            <a
-                    id="document-download-button"
-                    class="btn btn-primary"
-                    href="#"
-                    hidden
+
+            <button
+                id="new-chat-button"
+                class="btn sidebar-primary-action w-100 mt-4"
+                type="button"
+                aria-label="Start a new chat"
             >
-                Download
+                <span aria-hidden="true">＋</span>
+                New Chat
+            </button>
+
+
+            <a
+                href="{% url 'library' %}"
+                class="btn sidebar-secondary-action w-100 mt-2"
+            >
+                <span aria-hidden="true">▣</span>
+                Personal Library
             </a>
 
         </div>
 
-    </div>
+
+        <div class="sidebar-section-label">
+            Conversations
+        </div>
+
+
+        <div
+            id="chat-list"
+            class="chat-list"
+        >
+        </div>
+
+
+        <div class="sidebar-footer">
+
+            <div class="sidebar-user">
+
+                <div
+                    class="sidebar-user-avatar"
+                    aria-hidden="true"
+                >
+                    {{ request.user.username|slice:":1"|upper }}
+                </div>
+
+                <div class="sidebar-user-info">
+
+                    <span class="sidebar-user-label">
+                        Signed in as
+                    </span>
+
+                    <strong class="sidebar-username">
+                        {{ request.user.username }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <button
+                id="logout-button"
+                class="btn sidebar-logout-button btn-sm"
+                type="button"
+                aria-label="Log out"
+            >
+                Logout
+            </button>
+
+        </div>
+
+    </aside>
 
 
     <div
-            id="document-loading"
-            class="document-detail-loading"
+        id="sidebar-overlay"
+        class="sidebar-overlay"
     >
-        Loading document...
     </div>
 
 
-    <div
-            id="document-error"
-            class="alert alert-danger"
-            hidden
-    ></div>
+    <main class="chat-main">
+
+        <div class="mobile-chat-header">
+
+            <button
+                id="sidebar-toggle-button"
+                class="mobile-menu-button"
+                type="button"
+                aria-label="Open conversations"
+                aria-expanded="false"
+            >
+                <span aria-hidden="true">
+                    ☰
+                </span>
+            </button>
 
 
-    <section
-            id="document-content-section"
-            class="document-content-section"
-            hidden
-    >
-        <h2 class="document-content-title">
-            Extracted Text
-        </h2>
+            <div class="mobile-brand">
 
-        <pre
-                id="document-extracted-text"
-                class="document-extracted-text"
-        ></pre>
-    </section>
+                <span
+                    class="mobile-brand-mark"
+                    aria-hidden="true"
+                >
+                    PK
+                </span>
+
+                <span class="mobile-chat-title">
+                    Personal Knowledge AI
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div
+            id="empty-state"
+            class="empty-state"
+        >
+
+            <div class="empty-state-badge">
+                Personal Knowledge AI
+            </div>
+
+            <h2>
+                Ask your knowledge.
+            </h2>
+
+            <p>
+                Start a conversation or ask a question
+                about the documents in your personal library.
+            </p>
+
+            <div class="empty-state-hint">
+                AI Chat · Semantic Search · RAG
+            </div>
+
+        </div>
+
+
+        <div
+            id="messages"
+            class="messages"
+        >
+        </div>
+
+
+        <div class="message-input-container">
+
+            <div class="message-composer">
+
+                <form id="message-form">
+
+                    {% csrf_token %}
+
+                    <div class="input-group">
+
+                        <textarea
+                            id="message-input"
+                            class="form-control"
+                            rows="1"
+                            placeholder="Ask anything or search your knowledge..."
+                            aria-label="Message"
+                        ></textarea>
+
+                        <button
+                            id="send-button"
+                            class="btn btn-primary"
+                            type="submit"
+                        >
+                            Send
+                        </button>
+
+                    </div>
+
+                </form>
+
+
+                <div class="message-composer-hint">
+                    Personal Knowledge AI can use relevant
+                    documents from your private library.
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
 
 </div>
 
@@ -86,7 +237,9 @@ Document | Personal Knowledge AI
 
 
 {% block scripts %}
+
 <script
-        src="{% static 'frontend/js/document_detail.js' %}"
-></script>
+    src="{% static 'frontend/js/chat.js' %}?v=theme-3">
+</script>
+
 {% endblock %}

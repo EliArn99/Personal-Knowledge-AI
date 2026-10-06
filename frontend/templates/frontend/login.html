@@ -5,80 +5,173 @@
 Login | Personal Knowledge AI
 {% endblock %}
 
+{% block body_class %}
+auth-page-body
+{% endblock %}
+
 {% block content %}
 
 <div class="auth-page">
 
-    <div class="auth-card">
+    <div class="auth-layout">
 
-        <h1 class="mb-2">
-            Personal Knowledge AI
-        </h1>
+        <section class="auth-brand-panel">
 
-        <p class="text-secondary mb-4">
-            Sign in to continue
-        </p>
+            <div class="auth-brand-content">
 
-        <div
-            id="error-message"
-            class="alert alert-danger d-none">
-        </div>
-
-        <form id="login-form">
-
-            {% csrf_token %}
-
-            <div class="mb-3">
-
-                <label
-                    for="username"
-                    class="form-label">
-                    Username
-                </label>
-
-                <input
-                    id="username"
-                    class="form-control"
-                    type="text"
-                    required
+                <div
+                    class="auth-brand-mark"
+                    aria-hidden="true"
                 >
+                    PK
+                </div>
+
+                <div class="auth-eyebrow">
+                    Personal Knowledge AI
+                </div>
+
+                <h1 class="auth-brand-title">
+                    Your knowledge.
+                    <br>
+                    Your AI.
+                </h1>
+
+                <p class="auth-brand-description">
+                    Chat with AI, build a private document
+                    library and retrieve relevant knowledge
+                    with semantic search and RAG.
+                </p>
+
+
+                <div class="auth-feature-list">
+
+                    <div class="auth-feature">
+                        <span aria-hidden="true">✓</span>
+                        Private personal library
+                    </div>
+
+                    <div class="auth-feature">
+                        <span aria-hidden="true">✓</span>
+                        Semantic document search
+                    </div>
+
+                    <div class="auth-feature">
+                        <span aria-hidden="true">✓</span>
+                        Grounded AI answers
+                    </div>
+
+                </div>
 
             </div>
 
-            <div class="mb-4">
+        </section>
 
-                <label
-                    for="password"
-                    class="form-label">
-                    Password
-                </label>
 
-                <input
-                    id="password"
-                    class="form-control"
-                    type="password"
-                    required
+        <section class="auth-card">
+
+            <div class="auth-card-header">
+
+                <div
+                    class="auth-mobile-brand-mark"
+                    aria-hidden="true"
                 >
+                    PK
+                </div>
+
+                <span class="auth-card-kicker">
+                    Welcome back
+                </span>
+
+                <h2 class="auth-card-title">
+                    Sign in
+                </h2>
+
+                <p class="auth-card-subtitle">
+                    Continue to your personal AI workspace.
+                </p>
 
             </div>
 
-            <button
-                type="submit"
-                class="btn btn-dark w-100">
-                Login
-            </button>
 
-        </form>
+            <div
+                id="error-message"
+                class="alert alert-danger d-none"
+            >
+            </div>
 
-        <p class="text-center mt-4">
 
-            Don't have an account?
+            <form id="login-form">
 
-            <a href="/register/">
-                Register
-            </a>
+                {% csrf_token %}
 
-        </p>
+                <div class="mb-3">
+
+                    <label
+                        for="username"
+                        class="form-label"
+                    >
+                        Username
+                    </label>
+
+                    <input
+                        id="username"
+                        class="form-control"
+                        type="text"
+                        autocomplete="username"
+                        placeholder="Enter your username"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="mb-4">
+
+                    <label
+                        for="password"
+                        class="form-label"
+                    >
+                        Password
+                    </label>
+
+                    <input
+                        id="password"
+                        class="form-control"
+                        type="password"
+                        autocomplete="current-password"
+                        placeholder="Enter your password"
+                        required
+                    >
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="btn btn-primary w-100 auth-submit-button"
+                >
+                    Sign in
+                </button>
+
+            </form>
+
+
+            <div class="auth-card-footer">
+
+                <span>
+                    Don't have an account?
+                </span>
+
+                <a
+                    href="/register/"
+                    class="auth-link"
+                >
+                    Create account
+                </a>
+
+            </div>
+
+        </section>
 
     </div>
 
@@ -90,7 +183,7 @@ Login | Personal Knowledge AI
 {% block scripts %}
 
 <script
-    src="{% static 'frontend/js/login.js' %}">
+    src="{% static 'frontend/js/login.js' %}?v=theme-3">
 </script>
 
 {% endblock %}

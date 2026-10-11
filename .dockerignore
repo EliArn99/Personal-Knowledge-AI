@@ -1,0 +1,45 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Environment variables / secrets
+.env
+.env.*
+!.env.example
+
+# Git
+.git/
+.gitignore
+
+# IDE / editor files
+.idea/
+.vscode/
+*.iml
+
+# Django local database
+db.sqlite3
+db.sqlite3-journal
+
+# Uploaded files
+media/
+
+# Test / coverage files
+.coverage
+htmlcov/
+.pytest_cache/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Docker-generated / temporary files
+docker-compose.override.yml

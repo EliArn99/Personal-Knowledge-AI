@@ -24,7 +24,23 @@ DEBUG = os.getenv(
     "False",
 ).lower() == "true"
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in os.getenv(
+        "ALLOWED_HOSTS",
+        "localhost,127.0.0.1",
+    ).split(",")
+    if host.strip()
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    origin.strip()
+    for origin in os.getenv(
+        "CSRF_TRUSTED_ORIGINS",
+        "",
+    ).split(",")
+    if origin.strip()
+]
 
 
 # Application definition
@@ -52,6 +68,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -78,6 +95,21 @@ TEMPLATES = [
         },
     },
 ]
+
+STORAGES = {
+    "default": {
+        "BACKEND": (
+            "django.core.files.storage."
+            "FileSystemStorage"
+        ),
+    },
+    "staticfiles": {
+        "BACKEND": (
+            "whitenoise.storage."
+            "CompressedManifestStaticFilesStorage"
+        ),
+    },
+}
 
 
 WSGI_APPLICATION = "config.wsgi.application"
@@ -132,21 +164,52 @@ USE_TZ = True
 
 
 # Static files
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 
 # Email
 MAILERS = {
     "default": {
-        "BACKEND": "django.core.mail.backends.console.EmailBackend",
+        "BACKEND": os.getenv(
+            "EMAIL_BACKEND",
+            "django.core.mail.backends.smtp.EmailBackend",
+        ),
+        "OPTIONS": {
+            "host": os.getenv(
+                "EMAIL_HOST",
+                "localhost",
+            ),
+            "port": int(
+                os.getenv(
+                    "EMAIL_PORT",
+                    "587",
+                )
+            ),
+            "username": os.getenv(
+                "EMAIL_HOST_USER",
+                "",
+            ),
+            "password": os.getenv(
+                "EMAIL_HOST_PASSWORD",
+                "",
+            ),
+            "use_tls": (
+                os.getenv(
+                    "EMAIL_USE_TLS",
+                    "True",
+                ).lower()
+                == "true"
+            ),
+        },
     },
 }
-
 MEDIA_URL = "/media/"
 
 MEDIA_ROOT = (
     BASE_DIR / "media"
 )
+
 
 
 # Custom user model
@@ -160,3 +223,13 @@ AI_MODEL = os.getenv(
     "AI_MODEL",
     "openai/gpt-oss-120b",
 )
+
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
+X_FRAME_OPTIONS = "DENY"
+
+SECURE_REFERRER_POLICY = "same-origin"
+
+SESSION_COOKIE_HTTPONLY = True
+
+CSRF_COOKIE_HTTPONLY = False

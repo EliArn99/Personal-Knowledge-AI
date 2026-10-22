@@ -3,7 +3,7 @@ from uuid import uuid4
 
 from django.conf import settings
 from django.db import models
-
+from pgvector.django import VectorField
 
 def document_upload_path(instance, filename):
     extension = Path(filename).suffix.lower()
@@ -114,15 +114,18 @@ class DocumentChunk(models.Model):
 
     content = models.TextField()
 
-    embedding = models.JSONField(
-        null=True,
-        blank=True,
-    )
+
 
     embedding_model = models.CharField(
         max_length=255,
         blank=True,
         default="",
+    )
+
+    embedding = VectorField(
+        dimensions=384,
+        null=True,
+        blank=True,
     )
 
     created_at = models.DateTimeField(

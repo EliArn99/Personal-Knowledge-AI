@@ -1,54 +1,8 @@
-import math
+from pgvector.django import CosineDistance
 
 from apps.documents.models import DocumentChunk
 
 from .embeddings import generate_embeddings
-
-
-def dot_product(vector_a, vector_b):
-    return sum(
-        a * b
-        for a, b in zip(
-            vector_a,
-            vector_b,
-        )
-    )
-
-
-def vector_norm(vector):
-    return math.sqrt(
-        sum(
-            value * value
-            for value in vector
-        )
-    )
-
-
-def cosine_similarity(
-    vector_a,
-    vector_b,
-):
-    if not vector_a or not vector_b:
-        return 0.0
-
-    if len(vector_a) != len(vector_b):
-        return 0.0
-
-    denominator = (
-        vector_norm(vector_a)
-        * vector_norm(vector_b)
-    )
-
-    if denominator == 0:
-        return 0.0
-
-    return (
-        dot_product(
-            vector_a,
-            vector_b,
-        )
-        / denominator
-    )
 
 
 def semantic_search(
@@ -77,16 +31,24 @@ def semantic_search(
         .select_related(
             "document"
         )
+        .annotate(
+            distance=CosineDistance(
+                "embedding",
+                query_embedding,
+            )
+        )
+        .order_by(
+            "distance"
+        )
     )
 
     results = []
 
     for chunk in chunks:
-
-        similarity = cosine_similarity(
-            query_embedding,
-            chunk.embedding,
+        similarity = 1.0 - float(
+            chunk.distance
         )
+
         if similarity < min_score:
             continue
 
@@ -97,9 +59,7 @@ def semantic_search(
             }
         )
 
-    results.sort(
-        key=lambda item: item["score"],
-        reverse=True,
-    )
+        if len(results) >= limit:
+            break
 
-    return results[:limit]
+    return results

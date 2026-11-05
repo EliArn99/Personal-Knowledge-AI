@@ -55,7 +55,7 @@ class DocumentSemanticSearchAPITests(APITestCase):
                 "Django REST Framework is used "
                 "for building APIs."
             ),
-            embedding=[0.1, 0.2, 0.3],
+            embedding=[0.1] * 384,
             embedding_model="test-model",
         )
 

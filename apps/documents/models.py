@@ -3,7 +3,10 @@ from uuid import uuid4
 
 from django.conf import settings
 from django.db import models
-from pgvector.django import VectorField
+from pgvector.django import (
+    HnswIndex,
+    VectorField,
+)
 
 def document_upload_path(instance, filename):
     extension = Path(filename).suffix.lower()
@@ -144,6 +147,18 @@ class DocumentChunk(models.Model):
                     "chunk_index",
                 ],
                 name="unique_document_chunk_index",
+            ),
+        ]
+
+        indexes = [
+            HnswIndex(
+                name="doc_chunk_embedding_hnsw",
+                fields=["embedding"],
+                m=16,
+                ef_construction=64,
+                opclasses=[
+                    "vector_cosine_ops",
+                ],
             ),
         ]
 

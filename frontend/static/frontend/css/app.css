@@ -2915,3 +2915,393 @@ textarea:focus-visible {
         display: none;
     }
 }
+
+/* =====================================================
+   Smooth UI Animations
+===================================================== */
+
+@keyframes pkFadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+@keyframes pkMessageIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px) scale(0.995);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+
+/* Page / main content entrance */
+
+.auth-layout,
+.library-content,
+.document-detail-page {
+    animation:
+        pkFadeUp
+        0.28s
+        ease-out
+        both;
+}
+
+
+/* Cards */
+
+.library-intro,
+.library-upload-card,
+.library-documents-card,
+.document-content-section,
+.auth-card {
+    animation:
+        pkFadeUp
+        0.32s
+        ease-out
+        both;
+}
+
+
+/* Small stagger effect */
+
+.library-upload-card {
+    animation-delay: 0.04s;
+}
+
+.library-documents-card {
+    animation-delay: 0.08s;
+}
+
+.document-content-section {
+    animation-delay: 0.05s;
+}
+
+
+/* Chat messages */
+
+.message {
+    animation:
+        pkMessageIn
+        0.22s
+        ease-out
+        both;
+}
+
+
+/* Thinking indicator */
+
+.thinking-message {
+    animation:
+        pkMessageIn
+        0.18s
+        ease-out
+        both;
+}
+
+
+/* Smooth interactive elements */
+
+.document-item,
+.chat-item,
+.message-composer,
+.library-upload-card,
+.library-documents-card,
+.auth-card {
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease,
+        background-color 0.2s ease;
+}
+
+
+/* Accessibility */
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+
+        transition-duration: 0.01ms !important;
+
+        scroll-behavior: auto !important;
+    }
+}
+
+
+/* =====================================================
+   Chat Motion Polish
+===================================================== */
+
+@keyframes pkUserMessageIn {
+    from {
+        opacity: 0;
+        transform:
+            translateX(12px)
+            translateY(6px)
+            scale(0.99);
+    }
+
+    to {
+        opacity: 1;
+        transform:
+            translateX(0)
+            translateY(0)
+            scale(1);
+    }
+}
+
+
+@keyframes pkAssistantMessageIn {
+    from {
+        opacity: 0;
+        transform:
+            translateX(-12px)
+            translateY(6px)
+            scale(0.99);
+    }
+
+    to {
+        opacity: 1;
+        transform:
+            translateX(0)
+            translateY(0)
+            scale(1);
+    }
+}
+
+
+@keyframes pkThinkingIn {
+    from {
+        opacity: 0;
+        transform:
+            translateY(6px)
+            scale(0.985);
+    }
+
+    to {
+        opacity: 1;
+        transform:
+            translateY(0)
+            scale(1);
+    }
+}
+
+
+/* Smooth scrolling in chat */
+
+.messages {
+    scroll-behavior: smooth;
+}
+
+
+/* Message entrance */
+
+.message-user {
+    animation:
+        pkUserMessageIn
+        0.26s
+        cubic-bezier(
+            0.22,
+            1,
+            0.36,
+            1
+        )
+        both;
+}
+
+
+.message-assistant {
+    animation:
+        pkAssistantMessageIn
+        0.30s
+        cubic-bezier(
+            0.22,
+            1,
+            0.36,
+            1
+        )
+        both;
+}
+
+
+.thinking-message {
+    animation:
+        pkThinkingIn
+        0.22s
+        ease-out
+        both;
+}
+
+
+/* More natural message interaction */
+
+.message {
+    transition:
+        transform 0.18s ease,
+        box-shadow 0.18s ease,
+        border-color 0.18s ease;
+}
+
+
+.message:hover {
+    transform:
+        translateY(-1px);
+}
+
+
+/* Composer polish */
+
+.message-composer {
+    transition:
+        box-shadow 0.22s ease,
+        transform 0.18s ease,
+        border-color 0.18s ease;
+}
+
+
+.message-composer:focus-within {
+    transform:
+        translateY(-1px);
+
+    box-shadow:
+        0 16px 38px
+        rgba(25, 25, 112, 0.14);
+
+    border-color:
+        var(--pk-primary-soft);
+}
+
+
+/* Send button press feedback */
+
+#send-button {
+    transition:
+        transform 0.14s ease,
+        box-shadow 0.18s ease,
+        background-color 0.18s ease;
+}
+
+
+#send-button:active {
+    transform:
+        scale(0.97);
+}
+
+
+/* Reduced motion */
+
+/* =====================================================
+   Chat Composer + Content Reveal
+===================================================== */
+
+#message-input {
+    overflow-y: hidden;
+
+    transition:
+        height 0.12s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+@keyframes pkContentReveal {
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(7px);
+
+        filter:
+            blur(1px);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0);
+
+        filter:
+            blur(0);
+    }
+}
+
+
+.message-new.message-assistant
+.message-content > * {
+    opacity: 0;
+
+    animation:
+        pkContentReveal
+        0.35s
+        cubic-bezier(
+            0.22,
+            1,
+            0.36,
+            1
+        )
+        forwards;
+
+    animation-delay:
+        calc(
+            var(--reveal-index, 0)
+            * 65ms
+        );
+}
+
+
+/* Plain user text stays simple */
+
+.message-new.message-user
+.message-content {
+    animation:
+        pkContentReveal
+        0.24s
+        cubic-bezier(
+            0.22,
+            1,
+            0.36,
+            1
+        )
+        both;
+}
+
+
+/* Reduced motion accessibility */
+
+@media (prefers-reduced-motion: reduce) {
+
+    #message-input {
+        transition: none;
+    }
+
+    .message-new.message-assistant
+    .message-content > *,
+
+    .message-new.message-user
+    .message-content {
+        opacity: 1;
+
+        animation: none !important;
+
+        transform: none;
+
+        filter: none;
+    }
+}

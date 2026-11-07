@@ -4,17 +4,13 @@ Django settings for config project.
 
 import os
 from pathlib import Path
-
 from dotenv import load_dotenv
-
 
 # Base directory
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Load environment variables
 load_dotenv(BASE_DIR / ".env")
-
 
 # Security
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
@@ -42,7 +38,6 @@ CSRF_TRUSTED_ORIGINS = [
     if origin.strip()
 ]
 
-
 # Application definition
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -51,20 +46,14 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.postgres",
 
-    # Third-party apps
-    "rest_framework",
-
-    # Local apps
     "apps.accounts",
     "apps.chats",
     "apps.ai",
     "apps.frontend",
     "apps.documents",
 ]
-
-
-
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -77,9 +66,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-
 ROOT_URLCONF = "config.urls"
-
 
 TEMPLATES = [
     {
@@ -111,9 +98,7 @@ STORAGES = {
     },
 }
 
-
 WSGI_APPLICATION = "config.wsgi.application"
-
 
 # Database
 DATABASES = {
@@ -141,7 +126,6 @@ DATABASES = {
         ),
     }
 }
-
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -171,7 +155,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 LANGUAGE_CODE = "en-us"
 
@@ -181,11 +164,9 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
-
 
 # Email
 MAILERS = {
@@ -214,11 +195,11 @@ MAILERS = {
                 "",
             ),
             "use_tls": (
-                os.getenv(
-                    "EMAIL_USE_TLS",
-                    "True",
-                ).lower()
-                == "true"
+                    os.getenv(
+                        "EMAIL_USE_TLS",
+                        "True",
+                    ).lower()
+                    == "true"
             ),
         },
     },
@@ -226,14 +207,11 @@ MAILERS = {
 MEDIA_URL = "/media/"
 
 MEDIA_ROOT = (
-    BASE_DIR / "media"
+        BASE_DIR / "media"
 )
-
-
 
 # Custom user model
 AUTH_USER_MODEL = "accounts.User"
-
 
 # AI / Groq settings
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")

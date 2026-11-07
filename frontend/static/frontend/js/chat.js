@@ -689,6 +689,7 @@ function addCopyButtons(container) {
     }
 }
 
+
 /* =====================================================
    Messages
 ===================================================== */
@@ -734,7 +735,8 @@ function renderMessages(messages) {
 
     for (const message of messages) {
         appendMessage(
-            message
+            message,
+            false
         );
     }
 
@@ -742,7 +744,10 @@ function renderMessages(messages) {
 }
 
 
-function appendMessage(message) {
+function appendMessage(
+    message,
+    animate = false
+) {
     const container =
         document.getElementById(
             "messages"
@@ -766,6 +771,12 @@ function appendMessage(message) {
     element.classList.add(
         "message"
     );
+
+    if (animate) {
+        element.classList.add(
+            "message-new"
+        );
+    }
 
     if (message.role === "user") {
         element.classList.add(
@@ -812,6 +823,25 @@ function appendMessage(message) {
     } else {
         content.textContent =
             message.content;
+    }
+
+    if (
+        animate &&
+        message.role === "assistant"
+    ) {
+        const blocks =
+            content.children;
+
+        Array.from(
+            blocks
+        ).forEach(
+            (block, index) => {
+                block.style.setProperty(
+                    "--reveal-index",
+                    index
+                );
+            }
+        );
     }
 
     element.appendChild(
@@ -867,7 +897,7 @@ function appendMessage(message) {
         for (
             const source
             of message.sources
-            ) {
+        ) {
             const sourceItem =
                 document.createElement(
                     "li"
@@ -1105,10 +1135,13 @@ async function sendMessage(content) {
 
     /* Show user message immediately */
 
-    appendMessage({
-        role: "user",
-        content: content,
-    });
+    appendMessage(
+        {
+            role: "user",
+            content: content,
+        },
+        true
+    );
 
     scrollToBottom();
 
@@ -1190,7 +1223,8 @@ async function sendMessage(content) {
             );
 
             appendMessage(
-                data.assistant_message
+                data.assistant_message,
+                true
             );
 
             scrollToBottom();
@@ -1218,11 +1252,14 @@ async function sendMessage(content) {
                 thinkingIndicator
             );
 
-            appendMessage({
-                role: "assistant",
-                content:
-                    "Something went wrong. Please try again.",
-            });
+            appendMessage(
+                {
+                    role: "assistant",
+                    content:
+                        "Something went wrong. Please try again.",
+                },
+                true
+            );
 
             scrollToBottom();
         }
@@ -1258,6 +1295,7 @@ async function sendMessage(content) {
     }
 }
 
+
 /* =====================================================
    New Chat
 ===================================================== */
@@ -1270,6 +1308,56 @@ document
         "click",
         createChat
     );
+
+
+/* =====================================================
+   Message Composer Auto Resize
+===================================================== */
+
+function resizeMessageInput(input) {
+    if (!input) {
+        return;
+    }
+
+    const maxHeight = 180;
+
+    input.style.height = "auto";
+
+    const nextHeight = Math.min(
+        input.scrollHeight,
+        maxHeight
+    );
+
+    input.style.height =
+        `${nextHeight}px`;
+
+    input.style.overflowY =
+        input.scrollHeight > maxHeight
+            ? "auto"
+            : "hidden";
+}
+
+
+const messageInput =
+    document.getElementById(
+        "message-input"
+    );
+
+
+if (messageInput) {
+    resizeMessageInput(
+        messageInput
+    );
+
+    messageInput.addEventListener(
+        "input",
+        () => {
+            resizeMessageInput(
+                messageInput
+            );
+        }
+    );
+}
 
 
 /* =====================================================
@@ -1299,6 +1387,10 @@ document
 
             input.value =
                 "";
+
+            resizeMessageInput(
+                input
+            );
 
             await sendMessage(
                 content

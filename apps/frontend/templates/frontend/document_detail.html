@@ -1,0 +1,166 @@
+{% extends "frontend/base.html" %}
+{% load static %}
+
+{% block title %}
+Document | Personal Knowledge AI
+{% endblock %}
+
+{% block body_class %}
+document-detail-page-body
+{% endblock %}
+
+{% block content %}
+
+<div
+    class="document-detail-page"
+    data-document-id="{{ document_id }}"
+>
+
+    <!-- =================================================
+         Navigation
+    ================================================== -->
+
+    <div class="document-detail-navigation">
+
+        <a
+            href="{% url 'library' %}"
+            class="document-back-link"
+        >
+            ← Back to Library
+        </a>
+
+        <span class="document-detail-brand">
+            Personal Knowledge AI
+        </span>
+
+    </div>
+
+
+    <!-- =================================================
+         Document header
+    ================================================== -->
+
+    <header class="document-detail-header">
+
+        <div class="document-detail-heading">
+
+            <div class="document-detail-heading-copy">
+
+                <div class="document-detail-badge">
+                    Knowledge source
+                </div>
+
+                <h1
+                    id="document-title"
+                    class="document-detail-title"
+                >
+                    Loading document...
+                </h1>
+
+                <div
+                    id="document-meta"
+                    class="document-detail-meta"
+                >
+                </div>
+
+            </div>
+
+
+            <a
+                id="document-download-button"
+                class="btn btn-primary"
+                href="#"
+                hidden
+            >
+                Download original
+            </a>
+
+        </div>
+
+    </header>
+
+
+    <!-- =================================================
+         Loading
+    ================================================== -->
+
+    <div
+        id="document-loading"
+        class="document-detail-loading"
+    >
+
+        <div
+            class="spinner-border spinner-border-sm"
+            role="status"
+        >
+        </div>
+
+        <span>
+            Loading document...
+        </span>
+
+    </div>
+
+
+    <!-- =================================================
+         Error
+    ================================================== -->
+
+    <div
+        id="document-error"
+        class="alert alert-danger"
+        hidden
+    >
+    </div>
+
+
+    <!-- =================================================
+         Extracted text
+    ================================================== -->
+
+    <section
+        id="document-content-section"
+        class="document-content-section"
+        hidden
+    >
+
+        <div class="document-content-heading">
+
+            <div>
+
+                <span class="document-content-kicker">
+                    AI-readable content
+                </span>
+
+                <h2 class="document-content-title">
+                    Extracted Text
+                </h2>
+
+            </div>
+
+            <span class="document-content-status">
+                Indexed knowledge
+            </span>
+
+        </div>
+
+
+        <pre
+            id="document-extracted-text"
+            class="document-extracted-text"
+        ></pre>
+
+    </section>
+
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script
+    src="{% static 'frontend/js/document_detail.js' %}?v=theme-2">
+</script>
+
+{% endblock %}

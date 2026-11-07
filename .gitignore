@@ -86,3 +86,8 @@ dist/
 # Docker local overrides
 # =========================
 docker-compose.override.yml
+
+
+# Local notes / secrets
+django-notes.md
+suoeruserpass

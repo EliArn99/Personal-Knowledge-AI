@@ -65,9 +65,6 @@ def index_document(document):
             )
         )
 
-    # Replace old chunks atomically.
-    # Running indexing twice will not
-    # duplicate the document chunks.
 
     with transaction.atomic():
 
